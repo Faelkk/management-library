@@ -11,32 +11,24 @@ using Microsoft.AspNetCore.Mvc;
 
 public class UserController : Controller
 {
+    private readonly IUserService userService;
 
-    private readonly IUserRepository userRepository;
-    private readonly IEmailService emailService;
-
-    private readonly IPasswordService passwordService;
-    private readonly TokenGenerator tokenGenerator;
-    public UserController(IUserRepository userRepository, IEmailService emailService, TokenGenerator tokenGenerator, IPasswordService passwordService)
+    public UserController(IUserService userService)
     {
-        this.userRepository = userRepository;
-        this.emailService = emailService;
-        this.tokenGenerator = tokenGenerator;
-        this.passwordService = passwordService;
+        this.userService = userService;
     }
-
 
     [HttpGet]
     public IActionResult GetAll()
     {
         try
         {
-            var users = userRepository.GetAll();
+            var users = userService.GetAllUsers();
             return Ok(users);
         }
         catch (Exception err)
         {
-            return BadRequest(new { message = err.Message.ToString() });
+            return BadRequest(new { message = err.Message });
         }
     }
 
@@ -45,74 +37,47 @@ public class UserController : Controller
     {
         try
         {
-            var users = userRepository.GetById(id);
-            return Ok(users);
+            var user = userService.GetUserById(id);
+            return Ok(user);
         }
         catch (Exception err)
         {
-            return BadRequest(new { message = err.Message.ToString() });
+            return BadRequest(new { message = err.Message });
         }
     }
+
 
     [HttpPost("/create")]
     public IActionResult Create([FromBody] UserInsertDto userInsertDto)
     {
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
-            var userCreated = userRepository.Create(userInsertDto);
-
-
-            var messageText = "<h4>Cadastro realizado em LibraryManagement </h4>";
-            messageText += "<p> Olá: " + userCreated.Name;
-            messageText += "<p> Boas vindas a LibraryManagement</p>";
-
-            Message message = new Message
-            {
-                Title = "LibraryManagement - Cadastro realizado",
-                Text = messageText,
-                MailTo = userCreated.Email
-            };
-            emailService.Send(message);
-
-
-            var token = tokenGenerator.Generate(userCreated);
-
-            return Created("", new { token });
-
+            var response = userService.CreateUser(userInsertDto);
+            return Created("", response);
         }
         catch (Exception err)
         {
-            return BadRequest(new { message = err.Message.ToString() });
+            return BadRequest(new { message = err.Message });
         }
     }
 
     [HttpPost("/login")]
+
     public IActionResult Login([FromBody] UserLoginDto userLoginDto)
     {
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
-            var userLogged = userRepository.Login(userLoginDto);
-
-            var userAgent = HttpContext.Request.Headers.UserAgent;
-            var dateTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-
-            var messageText = "<h4>Novo login realizado em LibraryManagement</h4>";
-            messageText += $"<p>Origem: {userAgent}<br />Data: {dateTime}</p>";
-            messageText += "<p>Caso não reconheça este login, revise seus dados de autenticação.</p>";
-
-            Message message = new Message
-            {
-                Title = "LibraryManagement - Novo login",
-                Text = messageText,
-                MailTo = userLogged.Email
-            };
-
-            emailService.Send(message);
-
-            var token = tokenGenerator.Generate(userLogged);
-
-            return Ok(new { token });
-
+            var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+            var response = userService.LoginUser(userLoginDto, userAgent);
+            return Ok(response);
         }
         catch (Exception err)
         {
@@ -123,33 +88,39 @@ public class UserController : Controller
     [HttpPatch("recover-password")]
     public async Task<IActionResult> RecoverPassword([FromBody] UserRecoveryPasswordDto userData)
     {
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
-            var response = await passwordService.ProcessPasswordRecovery(userData);
+            var response = await userService.RecoverPassword(userData);
             return Ok(response);
         }
         catch (Exception err)
         {
-            return BadRequest(new { message = err.Message.ToString() });
+            return BadRequest(new { message = err.Message });
         }
     }
 
     [HttpPatch("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] UserResetPasswordDto userData, [FromQuery] string token)
     {
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (string.IsNullOrEmpty(token))
-        {
             return BadRequest(new { message = "Token de redefinição de senha é obrigatório." });
-        }
 
         try
         {
-            var response = await passwordService.ProcessPasswordReset(userData, token);
+            var response = await userService.ResetPassword(userData, token);
             return Ok(response);
         }
         catch (Exception err)
         {
-            return BadRequest(new { message = err.Message.ToString() });
+            return BadRequest(new { message = err.Message });
         }
     }
 }

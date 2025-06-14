@@ -7,7 +7,12 @@ using LibraryManagement.UserRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 50 * 1024 * 1024;
+});
+
 
 
 builder.Services.AddDbContext<DatabaseContext>();
