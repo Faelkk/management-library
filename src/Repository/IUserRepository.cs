@@ -9,11 +9,10 @@ public interface IUserRepository
 {
     IEnumerable<UserResponseDto> GetAll();
     UserResponseDto GetById(int userId);
-    UserResponseDto Create(UserInsertDto userData);
-    UserResponseDto Login(UserLoginDto userLoginData);
+    UserResponseDto Create(UserInsertDto userDto);
+    UserResponseDto Login(UserLoginDto userLoginDto);
     Task Remove(int userId);
 
-    // Aqui idealmente você pode criar DTOs também para o token e usuário
     Task<PasswordResetTokenResponseDto> CreatePasswordResetToken(UserDto user);
     Task<PasswordResetTokenResponseDto> GetPasswordResetToken(string token);
     Task RemovePasswordResetToken(PasswordResetTokenResponseDto token);

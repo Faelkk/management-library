@@ -1,0 +1,110 @@
+using LibraryManagement.Dto;
+using LibraryManagement.LoanRepository;
+using LibraryManagement.Repository;
+
+namespace LibraryManagement.Services;
+
+public class LoanService : ILoanService
+{
+    private readonly ILoanRepository loanRepository;
+    private readonly IBookRepository bookRepository;
+
+    public IEnumerable<LoanResponseDto> GetAll()
+    {
+        var loans = loanRepository.GetAll();
+
+        return loans.Select(loan => new LoanResponseDto
+        {
+            BookId = loan.BookId,
+            Id = loan.Id,
+            LoanDate = loan.LoanDate,
+            ReturnAt = loan.ReturnAt,
+            ReturnDate = loan.ReturnDate,
+        });
+    }
+    public LoanResponseDto GetById(int id)
+    {
+
+        var loan = loanRepository.GetById(id);
+
+        if (loan == null)
+        {
+            throw new Exception("Not found loan");
+        }
+
+        return new LoanResponseDto
+        {
+            BookId = loan.BookId,
+            Id = loan.Id,
+            LoanDate = loan.LoanDate,
+            ReturnAt = loan.ReturnAt,
+            ReturnDate = loan.ReturnDate,
+        };
+    }
+    public LoanResponseDto Create(LoanInsertDto loanInsertDto)
+    {
+        var book = bookRepository.GetById(loanInsertDto.BookId);
+        if (book == null)
+            throw new Exception("Book not found");
+
+        if (book.Quantity <= 0)
+            throw new Exception("Book is not available for loan");
+
+        var newLoan = loanRepository.Create(loanInsertDto);
+
+        var updatedBookDto = new BookUpdateDto
+        {
+            Quantity = book.Quantity - 1
+        };
+        bookRepository.Update(book.Id, updatedBookDto);
+
+        return new LoanResponseDto
+        {
+            BookId = newLoan.BookId,
+            Id = newLoan.Id,
+            LoanDate = newLoan.LoanDate,
+            ReturnAt = newLoan.ReturnAt,
+            ReturnDate = newLoan.ReturnDate,
+        };
+    }
+
+    public LoanResponseDto Update(int id)
+    {
+
+        var updatedLoan = loanRepository.Update(id);
+
+        if (updatedLoan == null)
+            throw new Exception("Not found loan for update");
+
+        var book = bookRepository.GetById(updatedLoan.BookId);
+        if (book == null)
+            throw new Exception("Book not found");
+
+
+        var updatedBookDto = new BookUpdateDto
+        {
+            Quantity = book.Quantity + 1
+        };
+        bookRepository.Update(book.Id, updatedBookDto);
+
+        return new LoanResponseDto
+        {
+            BookId = updatedLoan.BookId,
+            Id = updatedLoan.Id,
+            LoanDate = updatedLoan.LoanDate,
+            ReturnAt = updatedLoan.ReturnAt,
+            ReturnDate = updatedLoan.ReturnDate,
+        };
+    }
+    public async Task Remove(int id)
+    {
+        var loanById = loanRepository.GetById(id);
+
+        if (loanById == null)
+            throw new Exception("loan by id not found");
+
+        await loanRepository.Remove(id);
+
+    }
+
+}

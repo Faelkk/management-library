@@ -1,30 +1,26 @@
 
-
 using System.ComponentModel.DataAnnotations;
 
 namespace LibraryManagement.Dto
 {
-    public class BookInsertDto
+    public class BookUpdateDto
     {
-        [Required(ErrorMessage = "O título é obrigatório")]
         [StringLength(100, ErrorMessage = "O título deve ter no máximo 100 caracteres")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        [Required(ErrorMessage = "O autor é obrigatório")]
         [StringLength(100, ErrorMessage = "O autor deve ter no máximo 100 caracteres")]
-        public string Author { get; set; }
+        public string? Author { get; set; }
 
         [Range(1500, 2100, ErrorMessage = "Ano de publicação inválido")]
-        public int PublishYear { get; set; }
+        public int? PublishYear { get; set; }
 
         [StringLength(500, ErrorMessage = "A descrição deve ter no máximo 500 caracteres")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        [Required(ErrorMessage = "A quantidade é obrigatória")]
         [Range(0, int.MaxValue, ErrorMessage = "A quantidade deve ser maior ou igual a zero")]
-        public int Quantity { get; set; }
-
+        public int? Quantity { get; set; }
         [Url(ErrorMessage = "URL da imagem inválida")]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
+
     }
 }

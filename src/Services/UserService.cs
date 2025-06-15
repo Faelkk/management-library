@@ -22,7 +22,7 @@ public class UserService : IUserService
         this.passwordService = passwordService;
     }
 
-    public IEnumerable<UserResponseDto> GetAllUsers()
+    public IEnumerable<UserResponseDto> GetAll()
     {
         var users = userRepository.GetAll();
 
@@ -36,7 +36,7 @@ public class UserService : IUserService
         });
     }
 
-    public UserResponseDto GetUserById(int id)
+    public UserResponseDto GetById(int id)
     {
         var user = userRepository.GetById(id);
 
@@ -53,7 +53,7 @@ public class UserService : IUserService
         };
     }
 
-    public UserResponseTokenDto CreateUser(UserInsertDto userInsertDto)
+    public UserResponseTokenDto Create(UserInsertDto userInsertDto)
     {
         var userCreated = userRepository.Create(userInsertDto);
 
@@ -77,7 +77,7 @@ public class UserService : IUserService
         };
     }
 
-    public UserResponseTokenDto LoginUser(UserLoginDto userLoginDto, string userAgent)
+    public UserResponseTokenDto Login(UserLoginDto userLoginDto, string userAgent)
     {
         var userLogged = userRepository.Login(userLoginDto);
 
@@ -115,4 +115,10 @@ public class UserService : IUserService
         var response = await passwordService.ProcessPasswordReset(userResetDto, token);
         return response;
     }
+
+    public async Task Remove(int bookId)
+    {
+        await userRepository.Remove(bookId);
+    }
+
 }

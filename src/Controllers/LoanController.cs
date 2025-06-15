@@ -1,18 +1,29 @@
 namespace LibraryManagement.Controllers;
 
-
+using LibraryManagement.Dto;
+using LibraryManagement.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("loan")]
 public class LoanController : Controller
 {
+    private readonly ILoanService loanService;
+
+    public LoanController(ILoanService loanService)
+    {
+        this.loanService = loanService;
+    }
+
+
     [HttpGet]
     public IActionResult GetAll()
     {
         try
         {
-            return Ok(new { Loans = "testando" });
+            var loans = loanService.GetAll();
+            return Ok(loans);
         }
         catch (Exception err)
         {
@@ -25,7 +36,8 @@ public class LoanController : Controller
     {
         try
         {
-            return Ok(new { Loan = $"Testando ID {id}" });
+            var loans = loanService.GetById(id);
+            return Ok(loans);
         }
         catch (Exception err)
         {
@@ -34,11 +46,15 @@ public class LoanController : Controller
     }
 
     [HttpPost]
-    public IActionResult Post()
+    public IActionResult Post([FromBody] LoanInsertDto loanInsertDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
-            return Ok(new { Loans = "testando" });
+            var response = loanService.Create(loanInsertDto);
+            return Created("", response);
         }
         catch (Exception err)
         {
@@ -51,7 +67,8 @@ public class LoanController : Controller
     {
         try
         {
-            return Ok(new { Loan = $"Atualizado ID {id}" });
+            var response = loanService.Update(id);
+            return Ok(response);
         }
         catch (Exception err)
         {
@@ -60,15 +77,17 @@ public class LoanController : Controller
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            return Ok(new { Loan = $"Deletado ID {id}" });
+            await loanService.Remove(id);
+            return NoContent();
         }
         catch (Exception err)
         {
             return BadRequest(new { message = err.Message });
         }
+
     }
 }

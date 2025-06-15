@@ -1,3 +1,4 @@
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,10 +22,11 @@ namespace LibraryManagement.Models
         public Book Book { get; set; }
 
         [Required]
-        public DateTime LoanDate { get; set; }
+        public DateTime LoanDate { get; set; } = DateTime.Now;
+
 
         [Required]
-        public DateTime ReturnDate { get; set; }
+        public DateTime ReturnDate { get; set; } = DateTime.Now.AddDays(7);
 
         public DateTime? ReturnAt { get; set; }
     }

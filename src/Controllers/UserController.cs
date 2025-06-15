@@ -1,9 +1,9 @@
-namespace LibraryManagement.Controllers;
-
 using LibraryManagement.Dto;
 using LibraryManagement.Services;
-using LibraryManagement.UserRepository;
 using Microsoft.AspNetCore.Mvc;
+
+namespace LibraryManagement.Controllers;
+
 
 [ApiController]
 [Route("user")]
@@ -23,7 +23,7 @@ public class UserController : Controller
     {
         try
         {
-            var users = userService.GetAllUsers();
+            var users = userService.GetAll();
             return Ok(users);
         }
         catch (Exception err)
@@ -37,7 +37,7 @@ public class UserController : Controller
     {
         try
         {
-            var user = userService.GetUserById(id);
+            var user = userService.GetById(id);
             return Ok(user);
         }
         catch (Exception err)
@@ -56,7 +56,7 @@ public class UserController : Controller
 
         try
         {
-            var response = userService.CreateUser(userInsertDto);
+            var response = userService.Create(userInsertDto);
             return Created("", response);
         }
         catch (Exception err)
@@ -76,7 +76,7 @@ public class UserController : Controller
         try
         {
             var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
-            var response = userService.LoginUser(userLoginDto, userAgent);
+            var response = userService.Login(userLoginDto, userAgent);
             return Ok(response);
         }
         catch (Exception err)
@@ -121,6 +121,20 @@ public class UserController : Controller
         catch (Exception err)
         {
             return BadRequest(new { message = err.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Remove(int id)
+    {
+        try
+        {
+            await userService.Remove(id);
+            return NoContent();
+        }
+        catch (Exception Err)
+        {
+            return BadRequest(new { message = Err.Message });
         }
     }
 }
