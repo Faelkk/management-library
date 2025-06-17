@@ -23,9 +23,11 @@ public class BookService : IBookService
 
         return books.Select(b => new BookResponseDto
         {
+            Id = b.Id,
             Author = b.Author,
             Available = b.Available,
             Description = b.Description,
+            Quantity = b.Quantity,
             ImageUrl = b.ImageUrl,
             Loans = b.Loans,
             PublishYear = b.PublishYear,
@@ -42,8 +44,10 @@ public class BookService : IBookService
 
         return new BookResponseDto
         {
+            Id = book.Id,
             Author = book.Author,
             Available = book.Available,
+            Quantity = book.Quantity,
             Description = book.Description,
             ImageUrl = book.ImageUrl,
             Loans = book.Loans,
@@ -58,13 +62,16 @@ public class BookService : IBookService
 
         return new BookResponseDto
         {
+            Id = newBook.Id,
             Author = newBook.Author,
             Available = newBook.Available,
             Description = newBook.Description,
             ImageUrl = newBook.ImageUrl,
             Loans = newBook.Loans,
             PublishYear = newBook.PublishYear,
-            Title = newBook.Title
+            Title = newBook.Title,
+            Quantity = newBook.Quantity
+
         };
     }
 
@@ -78,13 +85,16 @@ public class BookService : IBookService
 
         return new BookResponseDto
         {
+            Id = updatedBook.Id,
             Author = updatedBook.Author,
             Available = updatedBook.Available,
             Description = updatedBook.Description,
             ImageUrl = updatedBook.ImageUrl,
             Loans = updatedBook.Loans,
             PublishYear = updatedBook.PublishYear,
-            Title = updatedBook.Title
+            Title = updatedBook.Title,
+            Quantity = updatedBook.Quantity
+
         };
     }
 

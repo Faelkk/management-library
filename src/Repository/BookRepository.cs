@@ -24,7 +24,8 @@ namespace LibraryManagement.Repository
                 PublishYear = b.PublishYear,
                 Description = b.Description,
                 Available = b.Available,
-                ImageUrl = b.ImageUrl
+                ImageUrl = b.ImageUrl,
+                Quantity = b.Quantity,
             }).ToList();
         }
 
@@ -42,7 +43,8 @@ namespace LibraryManagement.Repository
                 PublishYear = b.PublishYear,
                 Description = b.Description,
                 Available = b.Available,
-                ImageUrl = b.ImageUrl
+                ImageUrl = b.ImageUrl,
+                Quantity = b.Quantity,
             };
         }
 
@@ -69,7 +71,8 @@ namespace LibraryManagement.Repository
                 PublishYear = book.PublishYear,
                 Description = book.Description,
                 Available = book.Available,
-                ImageUrl = book.ImageUrl
+                ImageUrl = book.ImageUrl,
+                Quantity = book.Quantity,
             };
         }
 
@@ -100,7 +103,8 @@ namespace LibraryManagement.Repository
                 PublishYear = book.PublishYear,
                 Description = book.Description,
                 Available = book.Available,
-                ImageUrl = book.ImageUrl
+                ImageUrl = book.ImageUrl,
+                Quantity = book.Quantity
             };
         }
 

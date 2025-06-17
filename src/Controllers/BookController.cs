@@ -1,5 +1,6 @@
 using LibraryManagement.Dto;
 using LibraryManagement.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Controllers;
@@ -21,6 +22,7 @@ public class BookController : Controller
     }
 
 
+    [Authorize(Policy = "Authenticated")]
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -35,6 +37,7 @@ public class BookController : Controller
         }
     }
 
+    [Authorize(Policy = "Authenticated")]
     [HttpGet("{id}")]
     public IActionResult GetOne(int id)
     {
@@ -50,7 +53,8 @@ public class BookController : Controller
         }
     }
 
-    [HttpPost]
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [DisableRequestSizeLimit]
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] BookCreateRequest request)
@@ -76,6 +80,8 @@ public class BookController : Controller
 
 
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpPatch("{id}")]
     public async Task<IActionResult> Patch(int id, [FromForm] BookUpdateRequest request)
     {
@@ -106,6 +112,8 @@ public class BookController : Controller
 
 
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Remove(int id)
     {
