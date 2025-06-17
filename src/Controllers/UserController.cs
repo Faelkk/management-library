@@ -1,5 +1,6 @@
 using LibraryManagement.Dto;
 using LibraryManagement.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Controllers;
@@ -18,6 +19,8 @@ public class UserController : Controller
         this.userService = userService;
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -32,6 +35,8 @@ public class UserController : Controller
         }
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpGet("{id}")]
     public IActionResult GetOne(int id)
     {
@@ -47,7 +52,7 @@ public class UserController : Controller
     }
 
 
-    [HttpPost("/create")]
+    [HttpPost("create")]
     public IActionResult Create([FromBody] UserInsertDto userInsertDto)
     {
 
@@ -57,7 +62,9 @@ public class UserController : Controller
         try
         {
             var response = userService.Create(userInsertDto);
-            return Created("", response);
+
+
+            return Created("", new { response.Token });
         }
         catch (Exception err)
         {
@@ -65,7 +72,7 @@ public class UserController : Controller
         }
     }
 
-    [HttpPost("/login")]
+    [HttpPost("login")]
 
     public IActionResult Login([FromBody] UserLoginDto userLoginDto)
     {
@@ -124,6 +131,8 @@ public class UserController : Controller
         }
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Remove(int id)
     {

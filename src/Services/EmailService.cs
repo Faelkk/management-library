@@ -28,6 +28,8 @@ public class EmailService : IEmailService
     {
         try
         {
+
+
             using (var msgEmail = new MailMessage())
             {
                 msgEmail.From = new MailAddress(_emailFrom);

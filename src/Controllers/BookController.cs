@@ -45,6 +45,7 @@ public class BookController : Controller
         }
         catch (Exception err)
         {
+
             return BadRequest(new { message = err.Message });
         }
     }

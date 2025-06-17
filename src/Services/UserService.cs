@@ -69,7 +69,10 @@ public class UserService : IUserService
         };
         emailService.Send(message);
 
+
+
         var token = tokenGenerator.Generate(userCreated);
+
 
         return new UserResponseTokenDto
         {

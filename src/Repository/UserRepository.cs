@@ -58,12 +58,12 @@ public class UserRepository : IUserRepository
 
     public UserResponseDto Create(UserInsertDto userData)
     {
+
         var existingUserWithEmail = databaseContext.Users.Any(user => user.Email == userData.Email);
         if (existingUserWithEmail)
         {
             throw new Exception("Email already in use");
         }
-
 
 
         var newUser = new User { Email = userData.Email, Name = userData.Name, Role = "User" };
@@ -72,6 +72,7 @@ public class UserRepository : IUserRepository
 
         databaseContext.Users.Add(newUser);
         databaseContext.SaveChanges();
+
 
         return new UserResponseDto { Id = newUser.Id, Name = newUser.Name, Email = newUser.Email, Role = newUser.Role };
     }

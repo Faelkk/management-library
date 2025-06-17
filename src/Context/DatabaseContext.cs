@@ -32,24 +32,29 @@ public class DatabaseContext : DbContext, IDatabaseContext
         var dbuser = Environment.GetEnvironmentVariable("DBUSER");
         var dbpass = Environment.GetEnvironmentVariable("DBPASSWORD");
 
-        var connectionString = $"Server={server};Database={database};User Id={dbuser};Password={dbpass};TrustServerCertificate=True";
+        var connectionString = $"Server={server};User Id={dbuser};Password={dbpass};TrustServerCertificate=True;";
 
-        optionsBuilder.UseSqlServer(connectionString);
+
+        optionsBuilder.UseSqlServer(connectionString, options =>
+ {
+     options.EnableRetryOnFailure();
+ });
     }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Book>(entity =>
-        {
-            entity.ToTable("book");
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Title).HasColumnName("title");
-            entity.Property(e => e.Author).HasColumnName("author");
-            entity.Property(e => e.PublishYear).HasColumnName("publish_year");
-            entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.Available).HasColumnName("available");
-            entity.Property(e => e.ImageUrl).HasColumnName("image_url");
-        });
+      {
+          entity.ToTable("book");
+          entity.Property(e => e.Id).HasColumnName("id");
+          entity.Property(e => e.Title).HasColumnName("title");
+          entity.Property(e => e.Author).HasColumnName("author");
+          entity.Property(e => e.PublishYear).HasColumnName("publish_year");
+          entity.Property(e => e.Description).HasColumnName("description");
+          entity.Property(e => e.ImageUrl).HasColumnName("image_url");
+          entity.Property(e => e.Quantity).HasColumnName("quantity");
+      });
 
         modelBuilder.Entity<User>(entity =>
         {

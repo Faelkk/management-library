@@ -1,11 +1,15 @@
+using System.Security.Claims;
+using System.Text;
 using LibraryManagement.Contexts;
 using LibraryManagement.DatabaseSeeder;
 using LibraryManagement.LoanRepository;
 using LibraryManagement.Repository;
 using LibraryManagement.Services;
 using LibraryManagement.UserRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,20 +33,67 @@ builder.Services.AddScoped<ILoanService, LoanService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IUploadFileService, UploadFileService>();
 builder.Services.AddScoped<TokenGenerator>();
 builder.Services.AddControllers();
 
+builder.Services.Configure<TokenOptions>(
+    builder.Configuration.GetSection(TokenOptions.Token)
+);
+
+var tokenOptions = builder.Configuration.GetSection(TokenOptions.Token);
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var key = builder.Configuration["Token:Secret"] ?? Environment.GetEnvironmentVariable("JWT_KEY");
+
+    if (string.IsNullOrEmpty(key))
+    {
+        throw new Exception("JWT key is missing");
+    }
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy =>
+        policy.RequireClaim(ClaimTypes.Role, "Admin"));
+    options.AddPolicy("Authenticated", policy =>
+        policy.RequireAuthenticatedUser());
+});
+
+
 builder.Services.AddOpenApi();
+
+var port = builder.Configuration["APIPORT"];
+builder.WebHost.UseUrls($"http://*:{port}");
+
 
 var app = builder.Build();
 
 
+var uploadsPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "Uploads"));
+
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "Uploads"))),
+    FileProvider = new PhysicalFileProvider(uploadsPath),
     RequestPath = "/uploads"
 });
+
 
 
 DatabaseSeeder.ApplyMigrationsAndSeed(app.Services);
@@ -54,6 +105,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
