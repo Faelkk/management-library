@@ -18,21 +18,18 @@ public class LoanService : ILoanService
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
     }
-    public IEnumerable<LoanResponseDto> GetAll()
+    public IEnumerable<LoanResponseDto> GetAll(int? year = null, int? month = null)
     {
         var loans = loanRepository.GetAll();
 
-        return loans.Select(loan => new LoanResponseDto
+        if (year.HasValue && month.HasValue)
         {
-            BookId = loan.BookId,
-            Id = loan.Id,
-            UserId = loan.UserId,
-            LoanDate = loan.LoanDate,
-            ReturnAt = loan.ReturnAt,
-            ReturnDate = loan.ReturnDate,
+            loans = loans.Where(l => l.LoanDate.Year == year.Value && l.LoanDate.Month == month.Value);
+        }
 
-        });
+        return loans;
     }
+
     public LoanResponseDto GetById(int id)
     {
 

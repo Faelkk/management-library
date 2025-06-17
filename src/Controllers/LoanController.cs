@@ -22,11 +22,11 @@ public class LoanController : Controller
     [Authorize(Policy = "Authenticated")]
     [Authorize(Policy = "Admin")]
     [HttpGet]
-    public IActionResult GetAll()
+    public IActionResult GetAll([FromQuery] int? year, [FromQuery] int? month)
     {
         try
         {
-            var loans = loanService.GetAll();
+            var loans = loanService.GetAll(year, month);
             return Ok(loans);
         }
         catch (Exception err)
@@ -34,6 +34,7 @@ public class LoanController : Controller
             return BadRequest(new { message = err.Message });
         }
     }
+
 
 
     [Authorize(Policy = "Authenticated")]
