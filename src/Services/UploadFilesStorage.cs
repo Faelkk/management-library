@@ -11,7 +11,7 @@ namespace LibraryManagement.Services
 
         public UploadFileService()
         {
-            // Pasta onde os arquivos serão salvos, pode ser configurável
+
             _uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
             if (!Directory.Exists(_uploadFolder))
             {
@@ -24,7 +24,8 @@ namespace LibraryManagement.Services
             if (file == null || file.Length == 0)
                 throw new ArgumentException("Arquivo inválido.");
 
-            // Gera nome único para evitar conflitos
+
+
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             var filePath = Path.Combine(_uploadFolder, fileName);
 

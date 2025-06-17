@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibraryManagement.Dto;
 
-public interface LoanInsertDto
+public class LoanInsertDto
 {
     [Required]
     public int BookId { get; set; }

@@ -31,7 +31,8 @@ public class BookService : IBookService
             ImageUrl = b.ImageUrl,
             Loans = b.Loans,
             PublishYear = b.PublishYear,
-            Title = b.Title
+            Title = b.Title,
+
         });
     }
 

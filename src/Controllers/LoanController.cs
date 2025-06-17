@@ -2,6 +2,7 @@ namespace LibraryManagement.Controllers;
 
 using LibraryManagement.Dto;
 using LibraryManagement.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,9 @@ public class LoanController : Controller
     }
 
 
+
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -31,6 +35,9 @@ public class LoanController : Controller
         }
     }
 
+
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpGet("{id}")]
     public IActionResult GetOne(int id)
     {
@@ -76,6 +83,8 @@ public class LoanController : Controller
         }
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

@@ -64,6 +64,7 @@ public class BookController : Controller
 
         var imageUrl = await _uploadFileService.UploadFileAsync(request.ImageFile);
 
+
         var bookInsertDto = new BookInsertDto
         {
             Title = request.Title,
@@ -119,6 +120,7 @@ public class BookController : Controller
     {
         try
         {
+
             await bookService.Remove(id);
             return NoContent();
         }

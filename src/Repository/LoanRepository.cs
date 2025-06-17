@@ -21,6 +21,7 @@ public class LoanRepository : ILoanRepository
         {
             Id = L.Id,
             BookId = L.BookId,
+            UserId = L.UserId,
             LoanDate = L.LoanDate,
             ReturnAt = L.ReturnAt,
             ReturnDate = L.ReturnDate,
@@ -40,6 +41,7 @@ public class LoanRepository : ILoanRepository
             BookId = loan.BookId,
             Id = loan.Id,
             LoanDate = loan.LoanDate,
+            UserId = loan.UserId,
             ReturnAt = loan.ReturnAt,
             ReturnDate = loan.ReturnDate,
         };
@@ -64,6 +66,7 @@ public class LoanRepository : ILoanRepository
             Id = loan.Id,
             BookId = loan.BookId,
             LoanDate = loan.LoanDate,
+            UserId = loan.UserId,
             ReturnAt = loan.ReturnAt,
             ReturnDate = loan.ReturnDate,
         };
@@ -73,7 +76,8 @@ public class LoanRepository : ILoanRepository
     {
         var loan = databaseContext.Loans.FirstOrDefault(l => l.Id == id);
 
-        if (loan == null) return null;
+        if (loan == null)
+            throw new Exception("loan not found");
 
         loan.ReturnAt = DateTime.Now;
 
@@ -82,6 +86,7 @@ public class LoanRepository : ILoanRepository
         return new LoanResponseDto
         {
             Id = loan.Id,
+            UserId = loan.UserId,
             BookId = loan.BookId,
             LoanDate = loan.LoanDate,
             ReturnAt = loan.ReturnAt,

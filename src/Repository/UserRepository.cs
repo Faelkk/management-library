@@ -22,15 +22,24 @@ public class UserRepository : IUserRepository
     public IEnumerable<UserResponseDto> GetAll()
     {
         var users = databaseContext.Users
-    .Select(user => new UserResponseDto
-    {
-        Id = user.Id,
-        Email = user.Email,
-        Name = user.Name,
-        Role = user.Role,
-
-    })
-    .ToList();
+            .Include(u => u.Loans)
+            .Select(user => new UserResponseDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name,
+                Role = user.Role,
+                Loans = user.Loans.Select(loan => new LoanResponseDto
+                {
+                    Id = loan.Id,
+                    BookId = loan.BookId,
+                    UserId = loan.UserId,
+                    LoanDate = loan.LoanDate,
+                    ReturnDate = loan.ReturnDate,
+                    ReturnAt = loan.ReturnAt
+                }).ToList()
+            })
+            .ToList();
 
         if (!users.Any())
         {
@@ -38,14 +47,30 @@ public class UserRepository : IUserRepository
         }
 
         return users;
-
     }
+
 
     public UserResponseDto GetById(int userId)
     {
         var user = databaseContext.Users
-            .Where(user => user.Id == userId)
-            .Select(user => new UserResponseDto { Id = user.Id, Email = user.Email, Name = user.Name, Role = user.Role })
+            .Include(u => u.Loans)
+            .Where(u => u.Id == userId)
+            .Select(user => new UserResponseDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name,
+                Role = user.Role,
+                Loans = user.Loans.Select(loan => new LoanResponseDto
+                {
+                    Id = loan.Id,
+                    BookId = loan.BookId,
+                    UserId = loan.UserId,
+                    LoanDate = loan.LoanDate,
+                    ReturnDate = loan.ReturnDate,
+                    ReturnAt = loan.ReturnAt
+                }).ToList()
+            })
             .FirstOrDefault();
 
         if (user == null)
@@ -130,7 +155,10 @@ public class UserRepository : IUserRepository
     {
 
         var userModel = await databaseContext.Users.FirstOrDefaultAsync(u => u.Email == userDto.Email);
-        if (userModel == null) throw new Exception("User not found");
+        if (userModel == null)
+        {
+            throw new Exception("User not found");
+        }
 
         var token = Guid.NewGuid().ToString();
         var expirationDate = DateTime.UtcNow.AddHours(24);
@@ -170,7 +198,6 @@ public class UserRepository : IUserRepository
             }
         }
 
-        // Mapeia entity para DTO
         return new PasswordResetTokenResponseDto
         {
             Id = tokenEntity.Id,
@@ -190,7 +217,6 @@ public class UserRepository : IUserRepository
 
     public async Task RemovePasswordResetToken(PasswordResetTokenResponseDto tokenDto)
     {
-        // Mapeia DTO para entidade para remover
         var tokenEntity = await databaseContext.PasswordResetTokens
             .FirstOrDefaultAsync(t => t.Id == tokenDto.Id);
 

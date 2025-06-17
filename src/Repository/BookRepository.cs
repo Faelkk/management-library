@@ -2,6 +2,7 @@
 using LibraryManagement.Contexts;
 using LibraryManagement.Dto;
 using LibraryManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository
 {
@@ -16,22 +17,37 @@ namespace LibraryManagement.Repository
 
         public IEnumerable<BookResponseDto> GetAll()
         {
-            return databaseContext.Books.Select(b => new BookResponseDto
-            {
-                Id = b.Id,
-                Title = b.Title,
-                Author = b.Author,
-                PublishYear = b.PublishYear,
-                Description = b.Description,
-                Available = b.Available,
-                ImageUrl = b.ImageUrl,
-                Quantity = b.Quantity,
-            }).ToList();
+            return databaseContext.Books
+                .Include(b => b.Loans)
+                .Select(b => new BookResponseDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Author = b.Author,
+                    PublishYear = b.PublishYear,
+                    Description = b.Description,
+                    Available = b.Available,
+                    ImageUrl = b.ImageUrl,
+                    Quantity = b.Quantity,
+                    Loans = b.Loans.Select(loan => new LoanResponseDto
+                    {
+                        Id = loan.Id,
+                        BookId = loan.BookId,
+                        UserId = loan.UserId,
+                        LoanDate = loan.LoanDate,
+                        ReturnDate = loan.ReturnDate,
+                        ReturnAt = loan.ReturnAt
+                    }).ToList()
+                })
+                .ToList();
         }
+
 
         public BookResponseDto GetById(int bookId)
         {
-            var b = databaseContext.Books.FirstOrDefault(b => b.Id == bookId);
+            var b = databaseContext.Books
+                .Include(b => b.Loans)
+                .FirstOrDefault(b => b.Id == bookId);
 
             if (b == null) return null;
 
@@ -45,6 +61,15 @@ namespace LibraryManagement.Repository
                 Available = b.Available,
                 ImageUrl = b.ImageUrl,
                 Quantity = b.Quantity,
+                Loans = b.Loans.Select(loan => new LoanResponseDto
+                {
+                    Id = loan.Id,
+                    BookId = loan.BookId,
+                    UserId = loan.UserId,
+                    LoanDate = loan.LoanDate,
+                    ReturnDate = loan.ReturnDate,
+                    ReturnAt = loan.ReturnAt
+                }).ToList()
             };
         }
 

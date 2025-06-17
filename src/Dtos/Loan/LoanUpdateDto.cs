@@ -2,7 +2,7 @@
 
 namespace LibraryManagement.Dto;
 
-public interface LoanUpdateDto
+public class LoanUpdateDto
 {
     public DateTime ReturnAt { get; set; }
 }
