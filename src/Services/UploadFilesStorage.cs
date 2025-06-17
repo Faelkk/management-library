@@ -24,11 +24,13 @@ namespace LibraryManagement.Services
             if (file == null || file.Length == 0)
                 throw new ArgumentException("Arquivo inválido.");
 
-
+            if (!file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException("Apenas arquivos de imagem são permitidos.");
+            }
 
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             var filePath = Path.Combine(_uploadFolder, fileName);
-
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
@@ -38,5 +40,6 @@ namespace LibraryManagement.Services
 
             return url;
         }
+
     }
 }

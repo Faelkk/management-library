@@ -6,7 +6,7 @@ public interface IBookService
 {
     IEnumerable<BookResponseDto> GetAll();
     BookResponseDto GetById(int id);
-    BookResponseDto Create(BookInsertDto bookInsertDto);
-    BookResponseDto Update(int id, BookUpdateDto bookUpdateDto);
+    Task<BookResponseDto> Create(BookCreateRequest request);
+    Task<BookResponseDto> Update(int id, BookUpdateRequest request);
     Task Remove(int id);
 }

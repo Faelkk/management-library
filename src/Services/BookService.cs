@@ -9,11 +9,13 @@ public class BookService : IBookService
 {
 
     private readonly IBookRepository bookRepository;
+    private readonly IUploadFileService uploadFileService;
 
     public BookService(
-        IBookRepository bookRepository)
+        IBookRepository bookRepository, IUploadFileService uploadFileService)
     {
         this.bookRepository = bookRepository;
+        this.uploadFileService = uploadFileService;
     }
 
 
@@ -57,8 +59,22 @@ public class BookService : IBookService
         };
     }
 
-    public BookResponseDto Create(BookInsertDto bookInsertDto)
+    public async Task<BookResponseDto> Create(BookCreateRequest request)
     {
+
+        var imageUrl = await uploadFileService.UploadFileAsync(request.ImageFile);
+
+
+        var bookInsertDto = new BookInsertDto
+        {
+            Title = request.Title,
+            Author = request.Author,
+            PublishYear = request.PublishYear,
+            Description = request.Description,
+            Quantity = request.Quantity,
+            ImageUrl = imageUrl
+        };
+
         var newBook = bookRepository.Create(bookInsertDto);
 
         return new BookResponseDto
@@ -77,8 +93,26 @@ public class BookService : IBookService
     }
 
 
-    public BookResponseDto Update(int id, BookUpdateDto bookUpdateDto)
+    public async Task<BookResponseDto> Update(int id, BookUpdateRequest request)
     {
+
+        string? imageUrl = null;
+
+        if (request.ImageFile != null)
+        {
+            imageUrl = await uploadFileService.UploadFileAsync(request.ImageFile);
+        }
+
+        var bookUpdateDto = new BookUpdateDto
+        {
+            Title = request.Title,
+            Author = request.Author,
+            PublishYear = request.PublishYear,
+            Description = request.Description,
+            Quantity = request.Quantity,
+            ImageUrl = imageUrl
+        };
+
         var updatedBook = bookRepository.Update(id, bookUpdateDto);
 
         if (updatedBook == null)

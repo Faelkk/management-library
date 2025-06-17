@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 using LibraryManagement.Contexts;
 using LibraryManagement.DatabaseSeeder;
 using LibraryManagement.LoanRepository;
@@ -8,6 +9,7 @@ using LibraryManagement.Services;
 using LibraryManagement.UserRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 
@@ -18,9 +20,6 @@ builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = 50 * 1024 * 1024;
 });
-
-
-
 
 
 builder.Services.AddDbContext<DatabaseContext>();
@@ -36,6 +35,7 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IUploadFileService, UploadFileService>();
 builder.Services.AddScoped<TokenGenerator>();
 builder.Services.AddControllers();
+
 
 builder.Services.Configure<TokenOptions>(
     builder.Configuration.GetSection(TokenOptions.Token)
@@ -79,10 +79,23 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddOpenApi();
 
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("fixed", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 5;
+        limiterOptions.Window = TimeSpan.FromSeconds(10);
+        limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        limiterOptions.QueueLimit = 0;
+    });
+});
+
+
 var port = builder.Configuration["APIPORT"];
 builder.WebHost.UseUrls($"http://*:{port}");
 
-
+// 🚀 Build app
 var app = builder.Build();
 
 
@@ -95,19 +108,23 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 
-
 DatabaseSeeder.ApplyMigrationsAndSeed(app.Services);
+
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAuthorization();
 
-app.MapControllers();
 
+app.MapControllers().RequireRateLimiting("fixed");
+
+// 🚀 Executa
 app.Run();

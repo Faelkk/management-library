@@ -13,12 +13,11 @@ public class BookController : Controller
 {
 
     private readonly IBookService bookService;
-    private readonly IUploadFileService _uploadFileService;
 
-    public BookController(IBookService bookService, IUploadFileService uploadFileService)
+
+    public BookController(IBookService bookService)
     {
         this.bookService = bookService;
-        this._uploadFileService = uploadFileService;
     }
 
 
@@ -61,22 +60,15 @@ public class BookController : Controller
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
-        var imageUrl = await _uploadFileService.UploadFileAsync(request.ImageFile);
-
-
-        var bookInsertDto = new BookInsertDto
+        try
         {
-            Title = request.Title,
-            Author = request.Author,
-            PublishYear = request.PublishYear,
-            Description = request.Description,
-            Quantity = request.Quantity,
-            ImageUrl = imageUrl
-        };
-
-        var response = bookService.Create(bookInsertDto);
-        return Created("", response);
+            var response = await bookService.Create(request);
+            return Created("", response);
+        }
+        catch (Exception err)
+        {
+            return BadRequest(new { message = err.Message });
+        }
     }
 
 
@@ -89,26 +81,15 @@ public class BookController : Controller
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        string? imageUrl = null;
-
-        if (request.ImageFile != null)
+        try
         {
-            imageUrl = await _uploadFileService.UploadFileAsync(request.ImageFile);
+            var updatedBook = await bookService.Update(id, request);
+            return Ok(updatedBook);
         }
-
-        var bookUpdateDto = new BookUpdateDto
+        catch (Exception err)
         {
-            Title = request.Title,
-            Author = request.Author,
-            PublishYear = request.PublishYear,
-            Description = request.Description,
-            Quantity = request.Quantity,
-            ImageUrl = imageUrl
-        };
-
-        var updatedBook = bookService.Update(id, bookUpdateDto);
-
-        return Ok(updatedBook);
+            return BadRequest(new { message = err.Message });
+        }
     }
 
 
@@ -120,7 +101,6 @@ public class BookController : Controller
     {
         try
         {
-
             await bookService.Remove(id);
             return NoContent();
         }
