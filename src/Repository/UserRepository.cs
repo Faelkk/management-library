@@ -29,6 +29,7 @@ public class UserRepository : IUserRepository
                 Email = user.Email,
                 Name = user.Name,
                 Role = user.Role,
+                PhoneNumber = user.PhoneNumber,
                 Loans = user.Loans.Select(loan => new LoanResponseDto
                 {
                     Id = loan.Id,
@@ -61,6 +62,7 @@ public class UserRepository : IUserRepository
                 Email = user.Email,
                 Name = user.Name,
                 Role = user.Role,
+                PhoneNumber = user.PhoneNumber,
                 Loans = user.Loans.Select(loan => new LoanResponseDto
                 {
                     Id = loan.Id,
@@ -91,7 +93,7 @@ public class UserRepository : IUserRepository
         }
 
 
-        var newUser = new User { Email = userData.Email, Name = userData.Name, Role = "User" };
+        var newUser = new User { Email = userData.Email, Name = userData.Name, Role = "User", PhoneNumber = userData.PhoneNumber };
         newUser.Password = passwordHasher.HashPassword(newUser, userData.Password);
 
 
@@ -99,7 +101,7 @@ public class UserRepository : IUserRepository
         databaseContext.SaveChanges();
 
 
-        return new UserResponseDto { Id = newUser.Id, Name = newUser.Name, Email = newUser.Email, Role = newUser.Role };
+        return new UserResponseDto { Id = newUser.Id, Name = newUser.Name, Email = newUser.Email, Role = newUser.Role, PhoneNumber = newUser.PhoneNumber };
     }
 
     public UserResponseDto Login(UserLoginDto userLoginData)
@@ -116,7 +118,7 @@ public class UserRepository : IUserRepository
             throw new Exception("Invalid password");
         }
 
-        return new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email, Role = user.Role, };
+        return new UserResponseDto { Id = user.Id, Name = user.Name, Email = user.Email, Role = user.Role, PhoneNumber = user.PhoneNumber };
     }
 
     public async Task Remove(int id)
@@ -146,7 +148,8 @@ public class UserRepository : IUserRepository
             Name = userModel.Name,
             Email = userModel.Email,
             Password = userModel.Password,
-            Role = userModel.Role
+            Role = userModel.Role,
+            PhoneNumber = userModel.PhoneNumber,
         };
     }
 

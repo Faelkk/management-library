@@ -1,6 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using LibraryManagement.Models.LibraryManagement.Models;
 
 namespace LibraryManagement.Models
 {

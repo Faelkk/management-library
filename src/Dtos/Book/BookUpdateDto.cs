@@ -1,4 +1,3 @@
-
 using System.ComponentModel.DataAnnotations;
 
 namespace LibraryManagement.Dto
@@ -17,10 +16,12 @@ namespace LibraryManagement.Dto
         [StringLength(500, ErrorMessage = "A descrição deve ter no máximo 500 caracteres")]
         public string? Description { get; set; }
 
+        public List<int>? GenreIds { get; set; }
+
         [Range(0, int.MaxValue, ErrorMessage = "A quantidade deve ser maior ou igual a zero")]
         public int? Quantity { get; set; }
+
         [Url(ErrorMessage = "URL da imagem inválida")]
         public string? ImageUrl { get; set; }
-
     }
 }

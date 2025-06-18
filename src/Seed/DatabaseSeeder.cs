@@ -23,7 +23,9 @@ public class DatabaseSeeder
             {
                 Name = "Admin",
                 Email = "admin@example.com",
-                Role = "Admin"
+                Role = "Admin",
+                PhoneNumber = "51997026264"
+
             };
 
             var hasher = new PasswordHasher<User>();

@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
+
 namespace LibraryManagement.Dto
 {
     public class BookInsertDto
@@ -20,6 +21,9 @@ namespace LibraryManagement.Dto
         [StringLength(500, ErrorMessage = "A descrição deve ter no máximo 500 caracteres")]
         public string Description { get; set; }
 
+        [Required(ErrorMessage = "Pelo menos um gênero é obrigatório")]
+        public List<int> GenreIds { get; set; }
+
         [Required(ErrorMessage = "A quantidade é obrigatória")]
         [Range(0, int.MaxValue, ErrorMessage = "A quantidade deve ser maior ou igual a zero")]
         public int Quantity { get; set; }
@@ -28,3 +32,4 @@ namespace LibraryManagement.Dto
         public string ImageUrl { get; set; }
     }
 }
+

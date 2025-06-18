@@ -32,7 +32,8 @@ public class UserService : IUserService
             Name = u.Name,
             Email = u.Email,
             Role = u.Role,
-            Loans = u.Loans
+            PhoneNumber = u.PhoneNumber,
+            Loans = u.Loans,
         });
     }
 
@@ -49,7 +50,9 @@ public class UserService : IUserService
             Name = user.Name,
             Email = user.Email,
             Role = user.Role,
-            Loans = user.Loans
+            Loans = user.Loans,
+            PhoneNumber = user.PhoneNumber,
+
         };
     }
 

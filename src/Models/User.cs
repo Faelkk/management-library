@@ -21,6 +21,10 @@ namespace LibraryManagement.Models
         [Required]
         public string Password { get; set; }
 
+
+        [Required]
+        public string PhoneNumber { get; set; }
+
         [Required]
         public string Role { get; set; }
 
