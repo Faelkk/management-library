@@ -1,5 +1,4 @@
 using LibraryManagement.Models;
-using LibraryManagement.Models.LibraryManagement.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Contexts;

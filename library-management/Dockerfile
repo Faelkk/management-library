@@ -2,10 +2,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 
-COPY src/LibraryManagement.csproj ./
+COPY library-management/LibraryManagement.csproj ./
 RUN dotnet restore "LibraryManagement.csproj"
 
-COPY src/ ./              
+COPY library-management/ ./              
 COPY Uploads/ ./Uploads/  
 RUN dotnet publish "LibraryManagement.csproj" -c Release -o /app/out
 

@@ -1,7 +1,6 @@
 using LibraryManagement.Contexts;
 using LibraryManagement.Dto;
 using LibraryManagement.Models;
-using LibraryManagement.Models.LibraryManagement.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository

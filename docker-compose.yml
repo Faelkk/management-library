@@ -5,7 +5,7 @@ services:
     container_name: library_management.service
     build:
       context: .
-      dockerfile: src/Dockerfile
+      dockerfile: library-management/Dockerfile
     ports:
       - "${APIPORT}:${APIPORT}"
     environment:
