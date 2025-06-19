@@ -36,15 +36,15 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IUploadFileService, UploadFileService>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
-builder.Services.AddControllers();
 
+
+builder.Services.AddControllers();
 
 builder.Services.Configure<TokenOptions>(
     builder.Configuration.GetSection(TokenOptions.Token)
 );
 
 var tokenOptions = builder.Configuration.GetSection(TokenOptions.Token);
-
 
 builder.Services.AddAuthentication(options =>
 {
@@ -69,7 +69,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin", policy =>
@@ -78,26 +77,39 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser());
 });
 
-
-builder.Services.AddOpenApi();
-
-
 builder.Services.AddRateLimiter(options =>
 {
-    options.AddFixedWindowLimiter("fixed", limiterOptions =>
+    options.AddFixedWindowLimiter(policyName: "fixed", options =>
     {
-        limiterOptions.PermitLimit = 5;
-        limiterOptions.Window = TimeSpan.FromSeconds(10);
-        limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        limiterOptions.QueueLimit = 0;
+        options.PermitLimit = 5;
+        options.Window = TimeSpan.FromSeconds(10);
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = 2;
     });
 });
 
 
-var port = builder.Configuration["APIPORT"];
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Library Management API",
+        Version = "v1",
+        Description = "API desenvolvida para gerenciaramento de uma biblioteca uma escola, permitindo cadastro de livros, empréstimos, devoluções, gerenciamento de usuários e muito mais.",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "Rafael Achtenberg",
+            Email = "achtenberg.rafa@gmail.com",
+            Url = new Uri("https://github.com/Faelkk")
+        }
+    });
+});
+
+
+var port = builder.Configuration["APIPORT"] ?? "5010";
 builder.WebHost.UseUrls($"http://*:{port}");
 
-// 🚀 Build app
 var app = builder.Build();
 
 
@@ -112,21 +124,17 @@ app.UseStaticFiles(new StaticFileOptions
 
 DatabaseSeeder.ApplyMigrationsAndSeed(app.Services);
 
-
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.MapOpenApi();
-}
-
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Library Management API v1");
+});
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseRateLimiter();
 app.UseAuthorization();
 
-
 app.MapControllers().RequireRateLimiting("fixed");
 
-// 🚀 Executa
 app.Run();
