@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LibraryManagement.Services;
 
-public class TokenGenerator
+public class TokenGenerator : ITokenGenerator
 {
     private readonly TokenOptions tokenOptions;
 

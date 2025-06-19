@@ -27,7 +27,6 @@ namespace LibraryManagement.Contexts
             var dbpass = Environment.GetEnvironmentVariable("DBPASSWORD");
 
             var connectionString = $"Server={server};Database={database};User Id={dbuser};Password={dbpass};TrustServerCertificate=True;";
-
             optionsBuilder.UseSqlServer(connectionString, options =>
             {
                 options.EnableRetryOnFailure();
@@ -82,7 +81,7 @@ namespace LibraryManagement.Contexts
                 entity.Property(e => e.BookId).HasColumnName("book_id");
                 entity.Property(e => e.LoanDate).HasColumnName("loan_date");
                 entity.Property(e => e.ReturnDate).HasColumnName("return_date");
-                entity.Property(e => e.ReturnAt).HasColumnName("return_at");
+                entity.Property(e => e.ReturnedAt).HasColumnName("returned_at");
             });
 
             modelBuilder.Entity<Genre>(entity =>

@@ -23,7 +23,7 @@ public class LoanRepository : ILoanRepository
             BookId = L.BookId,
             UserId = L.UserId,
             LoanDate = L.LoanDate,
-            ReturnAt = L.ReturnAt,
+            ReturnedAt = L.ReturnedAt,
             ReturnDate = L.ReturnDate,
         }).ToList();
     }
@@ -42,7 +42,7 @@ public class LoanRepository : ILoanRepository
             Id = loan.Id,
             LoanDate = loan.LoanDate,
             UserId = loan.UserId,
-            ReturnAt = loan.ReturnAt,
+            ReturnedAt = null,
             ReturnDate = loan.ReturnDate,
         };
 
@@ -55,7 +55,7 @@ public class LoanRepository : ILoanRepository
             UserId = loanDto.UserId,
             LoanDate = DateTime.Now,
             ReturnDate = DateTime.Now.AddDays(7),
-            ReturnAt = null
+            ReturnedAt = null
         };
 
         databaseContext.Loans.Add(loan);
@@ -67,19 +67,19 @@ public class LoanRepository : ILoanRepository
             BookId = loan.BookId,
             LoanDate = loan.LoanDate,
             UserId = loan.UserId,
-            ReturnAt = loan.ReturnAt,
+            ReturnedAt = loan.ReturnedAt,
             ReturnDate = loan.ReturnDate,
         };
 
     }
-    public LoanResponseDto Update(int id)
+    public LoanResponseDto Update(int id, LoanUpdateDto loanUpdateDto)
     {
         var loan = databaseContext.Loans.FirstOrDefault(l => l.Id == id);
 
         if (loan == null)
             throw new Exception("loan not found");
 
-        loan.ReturnAt = DateTime.Now;
+        loan.ReturnedAt = loanUpdateDto.ReturnedAt;
 
         databaseContext.SaveChanges();
 
@@ -89,7 +89,7 @@ public class LoanRepository : ILoanRepository
             UserId = loan.UserId,
             BookId = loan.BookId,
             LoanDate = loan.LoanDate,
-            ReturnAt = loan.ReturnAt,
+            ReturnedAt = loan.ReturnedAt,
             ReturnDate = loan.ReturnDate,
         };
     }

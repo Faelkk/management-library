@@ -29,6 +29,6 @@ namespace LibraryManagement.Models
         [Required]
         public DateTime ReturnDate { get; set; } = DateTime.Now.AddDays(7);
 
-        public DateTime? ReturnAt { get; set; }
+        public DateTime? ReturnedAt { get; set; }
     }
 }

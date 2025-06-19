@@ -35,7 +35,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IUploadFileService, UploadFileService>();
-builder.Services.AddScoped<TokenGenerator>();
+builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddControllers();
 
 

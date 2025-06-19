@@ -75,10 +75,9 @@ public class GenreRepository : IGenreRepository
         };
     }
 
-    public void Delete(int id)
+    public async Task<bool> Delete(int id)
     {
         var genre = context.Genres.FirstOrDefault(g => g.Id == id);
-
 
         if (genre == null)
         {
@@ -86,6 +85,8 @@ public class GenreRepository : IGenreRepository
         }
 
         context.Genres.Remove(genre);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
+
+        return true;
     }
 }

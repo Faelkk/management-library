@@ -10,5 +10,5 @@ public class LoanResponseDto
     public int UserId { get; set; }
     public DateTime LoanDate { get; set; }
     public DateTime ReturnDate { get; set; }
-    public DateTime? ReturnAt { get; set; }
+    public DateTime? ReturnedAt { get; set; }
 }

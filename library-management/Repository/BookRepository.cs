@@ -44,7 +44,7 @@ namespace LibraryManagement.Repository
                     UserId = loan.UserId,
                     LoanDate = loan.LoanDate,
                     ReturnDate = loan.ReturnDate,
-                    ReturnAt = loan.ReturnAt
+                    ReturnedAt = loan.ReturnedAt
                 }).ToList()
             });
         }
@@ -81,7 +81,7 @@ namespace LibraryManagement.Repository
                     UserId = loan.UserId,
                     LoanDate = loan.LoanDate,
                     ReturnDate = loan.ReturnDate,
-                    ReturnAt = loan.ReturnAt
+                    ReturnedAt = loan.ReturnedAt
                 }).ToList()
             };
         }
@@ -152,7 +152,7 @@ namespace LibraryManagement.Repository
         }
 
 
-        public async Task Remove(int bookId)
+        public async Task<bool> Remove(int bookId)
         {
             var book = databaseContext.Books
                 .Include(b => b.BookGenres)
@@ -167,6 +167,7 @@ namespace LibraryManagement.Repository
             databaseContext.Books.Remove(book);
 
             await databaseContext.SaveChangesAsync();
+            return true;
         }
     }
 }

@@ -8,5 +8,6 @@ public interface IGenreService
     GenreResponseDto GetById(int id);
     GenreResponseDto Create(GenreInsertDto genreInsertDto);
     GenreResponseDto Update(int id, GenreUpdateDto genre);
-    void Delete(int id);
+    Task<bool> Delete(int id);
+
 }

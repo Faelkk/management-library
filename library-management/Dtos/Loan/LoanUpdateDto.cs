@@ -4,5 +4,5 @@ namespace LibraryManagement.Dto;
 
 public class LoanUpdateDto
 {
-    public DateTime ReturnAt { get; set; }
+    public DateTime ReturnedAt { get; set; }
 }

@@ -44,8 +44,9 @@ public class GenreService : IGenreService
         return new GenreResponseDto { Id = updated.Id, Name = updated.Name };
     }
 
-    public void Delete(int id)
+    public async Task<bool> Delete(int id)
     {
-        genreRepository.Delete(id);
+        return await genreRepository.Delete(id);
     }
+
 }

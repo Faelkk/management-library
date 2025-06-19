@@ -37,7 +37,7 @@ public class UserRepository : IUserRepository
                     UserId = loan.UserId,
                     LoanDate = loan.LoanDate,
                     ReturnDate = loan.ReturnDate,
-                    ReturnAt = loan.ReturnAt
+                    ReturnedAt = loan.ReturnedAt
                 }).ToList()
             })
             .ToList();
@@ -70,7 +70,7 @@ public class UserRepository : IUserRepository
                     UserId = loan.UserId,
                     LoanDate = loan.LoanDate,
                     ReturnDate = loan.ReturnDate,
-                    ReturnAt = loan.ReturnAt
+                    ReturnedAt = loan.ReturnedAt
                 }).ToList()
             })
             .FirstOrDefault();

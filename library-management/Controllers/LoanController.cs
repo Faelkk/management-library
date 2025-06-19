@@ -71,11 +71,11 @@ public class LoanController : Controller
     }
 
     [HttpPatch("{id}")]
-    public IActionResult Patch(int id)
+    public IActionResult Patch(int id, [FromBody] LoanUpdateDto loanUpdateDto)
     {
         try
         {
-            var response = loanService.Update(id);
+            var response = loanService.Update(id, loanUpdateDto);
             return Ok(response);
         }
         catch (Exception err)

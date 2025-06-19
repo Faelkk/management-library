@@ -46,7 +46,7 @@ public class LoanService : ILoanService
             Id = loan.Id,
             UserId = loan.UserId,
             LoanDate = loan.LoanDate,
-            ReturnAt = loan.ReturnAt,
+            ReturnedAt = loan.ReturnedAt,
             ReturnDate = loan.ReturnDate,
         };
     }
@@ -88,15 +88,15 @@ public class LoanService : ILoanService
             Id = newLoan.Id,
             UserId = newLoan.UserId,
             LoanDate = newLoan.LoanDate,
-            ReturnAt = newLoan.ReturnAt,
+            ReturnedAt = newLoan.ReturnedAt,
             ReturnDate = newLoan.ReturnDate,
         };
     }
 
-    public LoanResponseDto Update(int id)
+    public LoanResponseDto Update(int id, LoanUpdateDto LoanUpdateDto)
     {
 
-        var updatedLoan = loanRepository.Update(id);
+        var updatedLoan = loanRepository.Update(id, LoanUpdateDto);
 
         if (updatedLoan == null) { throw new Exception("Not found loan for update"); }
 
@@ -120,7 +120,7 @@ public class LoanService : ILoanService
             Id = updatedLoan.Id,
             UserId = updatedLoan.UserId,
             LoanDate = updatedLoan.LoanDate,
-            ReturnAt = updatedLoan.ReturnAt,
+            ReturnedAt = updatedLoan.ReturnedAt,
             ReturnDate = updatedLoan.ReturnDate,
         };
     }

@@ -150,14 +150,11 @@ public class BookService : IBookService
     }
 
 
-    public async Task Remove(int id)
+    public async Task<bool> Remove(int id)
     {
-        var book = bookRepository.GetById(id);
 
-        if (book == null)
-            throw new Exception("Book not found");
 
-        await bookRepository.Remove(id);
+        return await bookRepository.Remove(id);
     }
 
 

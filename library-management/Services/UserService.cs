@@ -7,13 +7,13 @@ public class UserService : IUserService
 {
     private readonly IUserRepository userRepository;
     private readonly IEmailService emailService;
-    private readonly TokenGenerator tokenGenerator;
+    private readonly ITokenGenerator tokenGenerator;
     private readonly IPasswordService passwordService;
 
     public UserService(
         IUserRepository userRepository,
         IEmailService emailService,
-        TokenGenerator tokenGenerator,
+        ITokenGenerator tokenGenerator,
         IPasswordService passwordService)
     {
         this.userRepository = userRepository;

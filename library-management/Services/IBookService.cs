@@ -8,5 +8,5 @@ public interface IBookService
     BookResponseDto GetById(int id);
     Task<BookResponseDto> Create(BookCreateRequest request);
     Task<BookResponseDto> Update(int id, BookUpdateRequest request);
-    Task Remove(int id);
+    Task<bool> Remove(int id);
 }

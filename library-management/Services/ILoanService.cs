@@ -9,6 +9,6 @@ public interface ILoanService
 
     LoanResponseDto GetById(int id);
     LoanResponseDto Create(LoanInsertDto loanInsertDto);
-    LoanResponseDto Update(int id);
+    LoanResponseDto Update(int id, LoanUpdateDto loanUpdateDto);
     Task Remove(int id);
 }
