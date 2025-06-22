@@ -54,6 +54,7 @@ Para garantir facilidade de deploy e ambiente padronizado, o projeto está conta
 
 Api Documentada via OpenApi.
 ![Swagger UI](./docs/images/library-management-swagger-1.png)
+![Swagger UI](./docs/images/library-management-swagger-3.png)
 ![Swagger UI](./docs/images/library-management-swagger-2.png)
 
 🔧 **DevOps e Deploy**
