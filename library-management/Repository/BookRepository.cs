@@ -148,7 +148,31 @@ namespace LibraryManagement.Repository
 
             databaseContext.SaveChanges();
 
-            return GetById(book.Id);
+            return new BookResponseDto
+            {
+                Author = book.Author,
+                Available = book.Available,
+                Description = book.Description,
+                Id = book.Id,
+                ImageUrl = book.ImageUrl,
+                Loans = book.Loans.Select(loan => new LoanResponseDto
+                {
+                    Id = loan.Id,
+                    BookId = loan.BookId,
+                    UserId = loan.UserId,
+                    LoanDate = loan.LoanDate,
+                    ReturnDate = loan.ReturnDate,
+                    ReturnedAt = loan.ReturnedAt
+                }).ToList(),
+                PublishYear = book.PublishYear,
+                Title = book.Title,
+                Quantity = book.Quantity,
+                Genres = book.BookGenres.Select(bg => new GenreResponseDto
+                {
+                    Id = bg.Genre.Id,
+                    Name = bg.Genre.Name
+                }).ToList()
+            };
         }
 
 

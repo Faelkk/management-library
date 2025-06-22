@@ -153,7 +153,6 @@ public class BookService : IBookService
     public async Task<bool> Remove(int id)
     {
 
-
         return await bookRepository.Remove(id);
     }
 

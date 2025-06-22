@@ -12,6 +12,8 @@ namespace LibraryManagement.Contexts
         public DbSet<BookGenre> BookGenres { get; set; }
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
+        public DbSet<Client> clients { get; set; }
+
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
         public override int SaveChanges() => base.SaveChanges();
@@ -62,17 +64,6 @@ namespace LibraryManagement.Contexts
                 entity.Property(e => e.Quantity).HasColumnName("quantity");
             });
 
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.ToTable("user");
-                entity.Property(e => e.Id).HasColumnName("id");
-                entity.Property(e => e.Name).HasColumnName("name");
-                entity.Property(e => e.Email).HasColumnName("email");
-                entity.Property(e => e.Password).HasColumnName("password");
-                entity.Property(e => e.Role).HasColumnName("role");
-                entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
-            });
-
             modelBuilder.Entity<Loan>(entity =>
             {
                 entity.ToTable("loan");
@@ -96,6 +87,41 @@ namespace LibraryManagement.Contexts
                 entity.ToTable("book_genre");
                 entity.Property(bg => bg.BookId).HasColumnName("book_id");
                 entity.Property(bg => bg.GenreId).HasColumnName("genre_id");
+            });
+
+            modelBuilder.Entity<PasswordResetToken>(entity =>
+            {
+                entity.ToTable("password_reset_token");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.Token).HasColumnName("token");
+                entity.Property(e => e.ExpirationDate).HasColumnName("expiration_date");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+  {
+      entity.ToTable("user");
+      entity.Property(e => e.Id).HasColumnName("id");
+      entity.Property(e => e.Name).HasColumnName("name");
+      entity.Property(e => e.Email).HasColumnName("email");
+      entity.Property(e => e.Password).HasColumnName("password");
+      entity.Property(e => e.Role).HasColumnName("role");
+      entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
+
+      entity.HasIndex(e => e.Email).IsUnique();
+      entity.HasIndex(e => e.PhoneNumber).IsUnique();
+  });
+
+            modelBuilder.Entity<Client>(entity =>
+            {
+                entity.ToTable("client");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name");
+                entity.Property(e => e.Email).HasColumnName("email");
+                entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
+
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.PhoneNumber).IsUnique();
             });
         }
     }

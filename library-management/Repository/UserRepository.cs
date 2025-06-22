@@ -93,7 +93,7 @@ public class UserRepository : IUserRepository
         }
 
 
-        var newUser = new User { Email = userData.Email, Name = userData.Name, Role = "User", PhoneNumber = userData.PhoneNumber };
+        var newUser = new User { Email = userData.Email, Name = userData.Name, Role = "Admin", PhoneNumber = userData.PhoneNumber };
         newUser.Password = passwordHasher.HashPassword(newUser, userData.Password);
 
 

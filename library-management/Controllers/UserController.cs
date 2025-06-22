@@ -52,6 +52,8 @@ public class UserController : Controller
     }
 
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpPost("create")]
     public IActionResult Create([FromBody] UserInsertDto userInsertDto)
     {
