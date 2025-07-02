@@ -12,7 +12,6 @@ namespace LibraryManagement.Contexts
         public DbSet<BookGenre> BookGenres { get; set; }
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
-        public DbSet<Client> clients { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
@@ -112,17 +111,7 @@ namespace LibraryManagement.Contexts
       entity.HasIndex(e => e.PhoneNumber).IsUnique();
   });
 
-            modelBuilder.Entity<Client>(entity =>
-            {
-                entity.ToTable("client");
-                entity.Property(e => e.Id).HasColumnName("id");
-                entity.Property(e => e.Name).HasColumnName("name");
-                entity.Property(e => e.Email).HasColumnName("email");
-                entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
 
-                entity.HasIndex(e => e.Email).IsUnique();
-                entity.HasIndex(e => e.PhoneNumber).IsUnique();
-            });
         }
     }
 }

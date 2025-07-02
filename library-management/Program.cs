@@ -28,11 +28,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
-builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
-builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
@@ -113,6 +111,14 @@ var port = builder.Configuration["APIPORT"] ?? "5010";
 builder.WebHost.UseUrls($"http://*:{port}");
 
 var app = builder.Build();
+
+app.UseCors(builder =>
+{
+    builder
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+});
 
 
 var uploadsPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "Uploads"));

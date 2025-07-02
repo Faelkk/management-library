@@ -11,7 +11,6 @@ public interface IDatabaseContext
     DbSet<Genre> Genres { get; }
     DbSet<BookGenre> BookGenres { get; }
 
-    DbSet<Client> clients { get; }
     DbSet<PasswordResetToken> PasswordResetTokens { get; }
 
     int SaveChanges();

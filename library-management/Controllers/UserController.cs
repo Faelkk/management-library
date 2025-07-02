@@ -35,6 +35,7 @@ public class UserController : Controller
         }
     }
 
+
     [Authorize(Policy = "Authenticated")]
     [Authorize(Policy = "Admin")]
     [HttpGet("{id}")]
@@ -51,9 +52,14 @@ public class UserController : Controller
         }
     }
 
-
     [Authorize(Policy = "Authenticated")]
-    [Authorize(Policy = "Admin")]
+    [HttpGet("validate-token")]
+    public IActionResult ValidateToken()
+    {
+        return Ok(new { isValid = true });
+    }
+
+
     [HttpPost("create")]
     public IActionResult Create([FromBody] UserInsertDto userInsertDto)
     {
@@ -146,4 +152,6 @@ public class UserController : Controller
             return BadRequest(new { message = Err.Message });
         }
     }
+
+
 }
