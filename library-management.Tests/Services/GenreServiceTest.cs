@@ -9,33 +9,40 @@ public class GenreServiceTest
 {
     private readonly Mock<IGenreRepository> genreRepositoryMock;
     private readonly GenreService genreService;
+
     public GenreServiceTest()
     {
         genreRepositoryMock = new Mock<IGenreRepository>();
         genreService = new GenreService(genreRepositoryMock.Object);
     }
 
-
     [Fact]
     public void GetAll_ReturnsGenreResponseDtos()
     {
         var genres = new List<GenreResponseDto>
         {
-            new GenreResponseDto{ Id = 1, Name = "Fiction" },
-            new GenreResponseDto{ Id = 2, Name = "Non-Fiction" }
+            new GenreResponseDto { Id = 1, Name = "Fiction" },
+            new GenreResponseDto { Id = 2, Name = "Non-Fiction" },
         };
 
         genreRepositoryMock.Setup(r => r.GetAll()).Returns(genres);
 
-
         var result = genreService.GetAll();
 
-
-        Assert.Collection(result, g => { Assert.Equal(1, g.Id); Assert.Equal("Fiction", g.Name); },
-                          g => { Assert.Equal(2, g.Id); Assert.Equal("Non-Fiction", g.Name); });
-
+        Assert.Collection(
+            result,
+            g =>
+            {
+                Assert.Equal(1, g.Id);
+                Assert.Equal("Fiction", g.Name);
+            },
+            g =>
+            {
+                Assert.Equal(2, g.Id);
+                Assert.Equal("Non-Fiction", g.Name);
+            }
+        );
     }
-
 
     [Fact]
     public void GetById_ExistingGenre_ReturnGenreResponseDto()
@@ -54,7 +61,9 @@ public class GenreServiceTest
     {
         var genreResponseDto = new GenreResponseDto { Id = 1, Name = "Fiction" };
 
-        genreRepositoryMock.Setup(r => r.Create(It.IsAny<GenreInsertDto>())).Returns(genreResponseDto);
+        genreRepositoryMock
+            .Setup(r => r.Create(It.IsAny<GenreInsertDto>()))
+            .Returns(genreResponseDto);
 
         var result = genreService.Create(new GenreInsertDto { Name = "Fiction" });
 
@@ -67,7 +76,8 @@ public class GenreServiceTest
     {
         var genreUpdateDto = new GenreUpdateDto { Name = "Updated Fiction" };
 
-        genreRepositoryMock.Setup(r => r.Update(1, genreUpdateDto))
+        genreRepositoryMock
+            .Setup(r => r.Update(1, genreUpdateDto))
             .Returns(new GenreResponseDto { Id = 1, Name = "Updated Fiction" });
 
         var result = genreService.Update(1, genreUpdateDto);
@@ -77,12 +87,10 @@ public class GenreServiceTest
     }
 
     [Fact]
-
     public void Delete_ExistingGenre_ReturnsTrue()
     {
         genreRepositoryMock.Setup(r => r.Delete(1)).Returns(Task.FromResult(true));
         var result = genreService.Delete(1).Result;
-
 
         Assert.True(result);
     }

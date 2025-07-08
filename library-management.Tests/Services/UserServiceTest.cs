@@ -1,12 +1,12 @@
-using Moq;
-using Xunit;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LibraryManagement.Services;
 using LibraryManagement.Dto;
-using LibraryManagement.UserRepository;
-using System;
 using LibraryManagement.Models;
+using LibraryManagement.Services;
+using LibraryManagement.UserRepository;
+using Moq;
+using Xunit;
 
 public class UserServiceTest
 {
@@ -36,15 +36,30 @@ public class UserServiceTest
     {
         var users = new List<UserResponseDto>
         {
-            new UserResponseDto { Id = 1, Name = "Alice", Email = "alice@mail.com", Role = "User", PhoneNumber = "123" },
-            new UserResponseDto { Id = 2, Name = "Bob", Email = "bob@mail.com", Role = "Admin", PhoneNumber = "456" }
+            new UserResponseDto
+            {
+                Id = 1,
+                Name = "Alice",
+                Email = "alice@mail.com",
+                Role = "User",
+                PhoneNumber = "123",
+            },
+            new UserResponseDto
+            {
+                Id = 2,
+                Name = "Bob",
+                Email = "bob@mail.com",
+                Role = "Admin",
+                PhoneNumber = "456",
+            },
         };
 
         userRepositoryMock.Setup(r => r.GetAll()).Returns(users);
 
         var result = userService.GetAll();
 
-        Assert.Collection(result,
+        Assert.Collection(
+            result,
             u =>
             {
                 Assert.Equal(1, u.Id);
@@ -59,12 +74,20 @@ public class UserServiceTest
     }
 
     [Fact]
-    public void GetById_ExistingUser_ReturnsUserResponseDto()
+    public async Task GetById_ExistingUser_ReturnsUserResponseDto()
     {
-        var userResponseDto = new UserResponseDto { Id = 1, Name = "Alice", Email = "alice@mail.com", Role = "User", PhoneNumber = "123" };
-        userRepositoryMock.Setup(r => r.GetById(1)).Returns(userResponseDto);
+        var userResponseDto = new UserResponseDto
+        {
+            Id = 1,
+            Name = "Alice",
+            Email = "alice@mail.com",
+            Role = "User",
+            PhoneNumber = "123",
+        };
 
-        var result = userService.GetById(1);
+        userRepositoryMock.Setup(r => r.GetById(1)).ReturnsAsync(userResponseDto);
+
+        var result = await userService.GetById(1);
 
         Assert.Equal(1, result.Id);
         Assert.Equal("Alice", result.Name);
@@ -72,33 +95,58 @@ public class UserServiceTest
     }
 
     [Fact]
-    public void GetById_NonExistingUser_ThrowsException()
+    public async Task GetById_NonExistingUser_ThrowsException()
     {
-        userRepositoryMock.Setup(r => r.GetById(99)).Returns((UserResponseDto)null);
+        userRepositoryMock.Setup(r => r.GetById(99)).ReturnsAsync((UserResponseDto)null);
 
-        Assert.Throws<Exception>(() => userService.GetById(99));
+        await Assert.ThrowsAsync<Exception>(() => userService.GetById(99));
     }
 
     [Fact]
     public void Create_ValidUser_ReturnsTokenAndSendsEmail()
     {
-        var userInsertDto = new UserInsertDto { Name = "Alice", Email = "alice@mail.com", Password = "pass" };
-        var createdUserResponseDto = new UserResponseDto { Id = 1, Name = "Alice", Email = "alice@mail.com", Role = "User", PhoneNumber = "123" };
+        var userInsertDto = new UserInsertDto
+        {
+            Name = "Alice",
+            Email = "alice@mail.com",
+            Password = "pass",
+        };
+
+        var createdUserResponseDto = new UserResponseDto
+        {
+            Id = 1,
+            Name = "Alice",
+            Email = "alice@mail.com",
+            Role = "User",
+            PhoneNumber = "123",
+        };
 
         userRepositoryMock.Setup(r => r.Create(userInsertDto)).Returns(createdUserResponseDto);
-        tokenGeneratorMock.Setup(t => t.Generate(It.IsAny<UserResponseDto>())).Returns("token123");
+
+        tokenGeneratorMock.Setup(t => t.Generate(createdUserResponseDto)).Returns("token123");
 
         var result = userService.Create(userInsertDto);
 
         Assert.Equal("token123", result.Token);
-        emailServiceMock.Verify(e => e.Send(It.Is<Message>(m => m.MailTo == "alice@mail.com")), Times.Once);
+        emailServiceMock.Verify(
+            e => e.Send(It.Is<Message>(m => m.MailTo == "alice@mail.com")),
+            Times.Once
+        );
     }
 
     [Fact]
     public void Login_ValidCredentials_ReturnsTokenAndSendsEmail()
     {
         var userLoginDto = new UserLoginDto { Email = "alice@mail.com", Password = "pass" };
-        var loggedUserResponseDto = new UserResponseDto { Id = 1, Name = "Alice", Email = "alice@mail.com", Role = "User", PhoneNumber = "123" };
+
+        var loggedUserResponseDto = new UserResponseDto
+        {
+            Id = 1,
+            Name = "Alice",
+            Email = "alice@mail.com",
+            Role = "User",
+            PhoneNumber = "123",
+        };
 
         userRepositoryMock.Setup(r => r.Login(userLoginDto)).Returns(loggedUserResponseDto);
         tokenGeneratorMock.Setup(t => t.Generate(loggedUserResponseDto)).Returns("token456");
@@ -106,7 +154,10 @@ public class UserServiceTest
         var result = userService.Login(userLoginDto, "TestAgent");
 
         Assert.Equal("token456", result.Token);
-        emailServiceMock.Verify(e => e.Send(It.Is<Message>(m => m.MailTo == "alice@mail.com")), Times.Once);
+        emailServiceMock.Verify(
+            e => e.Send(It.Is<Message>(m => m.MailTo == "alice@mail.com")),
+            Times.Once
+        );
     }
 
     [Fact]
@@ -115,7 +166,9 @@ public class UserServiceTest
         var recoveryDto = new UserRecoveryPasswordDto { email = "alice@mail.com" };
         var responseDto = new UserResponseMessageDto { Message = "Recovery sent" };
 
-        passwordServiceMock.Setup(p => p.ProcessPasswordRecovery(recoveryDto)).ReturnsAsync(responseDto);
+        passwordServiceMock
+            .Setup(p => p.ProcessPasswordRecovery(recoveryDto))
+            .ReturnsAsync(responseDto);
 
         var result = await userService.RecoverPassword(recoveryDto);
 
@@ -128,7 +181,9 @@ public class UserServiceTest
         var resetDto = new UserResetPasswordDto { password = "newpass" };
         var responseDto = new UserResponseMessageDto { Message = "Password reset" };
 
-        passwordServiceMock.Setup(p => p.ProcessPasswordReset(resetDto, "token")).ReturnsAsync(responseDto);
+        passwordServiceMock
+            .Setup(p => p.ProcessPasswordReset(resetDto, "token"))
+            .ReturnsAsync(responseDto);
 
         var result = await userService.ResetPassword(resetDto, "token");
 
