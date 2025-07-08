@@ -1,5 +1,3 @@
-
-
 using System.ComponentModel.DataAnnotations;
 
 namespace LibraryManagement.Dto;
@@ -10,5 +8,11 @@ public class LoanInsertDto
     public int BookId { get; set; }
 
     [Required]
-    public int UserId { get; set; }
+    public int ClientId { get; set; }
+
+    [Required]
+    public DateTime LoanDate { get; set; }
+
+    [Required]
+    public DateTime ReturnDate { get; set; }
 }

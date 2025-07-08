@@ -15,11 +15,12 @@ public class GenreRepository : IGenreRepository
 
     public IEnumerable<GenreResponseDto> GetAll()
     {
-        return context.Genres
-            .Select(g => new GenreResponseDto
+        return context
+            .Genres.Select(g => new GenreResponseDto
             {
                 Id = g.Id,
-                Name = g.Name
+                Name = g.Name,
+                Description = g.Description,
             })
             .ToList();
     }
@@ -35,16 +36,14 @@ public class GenreRepository : IGenreRepository
         return new GenreResponseDto
         {
             Id = genre.Id,
-            Name = genre.Name
+            Name = genre.Name,
+            Description = genre.Description,
         };
     }
 
     public GenreResponseDto Create(GenreInsertDto genre)
     {
-        var newGenre = new Genre
-        {
-            Name = genre.Name,
-        };
+        var newGenre = new Genre { Name = genre.Name, Description = genre.Description };
 
         context.Genres.Add(newGenre);
         context.SaveChanges();
@@ -52,7 +51,8 @@ public class GenreRepository : IGenreRepository
         return new GenreResponseDto
         {
             Id = newGenre.Id,
-            Name = newGenre.Name
+            Name = newGenre.Name,
+            Description = newGenre.Description,
         };
     }
 
@@ -64,14 +64,19 @@ public class GenreRepository : IGenreRepository
             throw new Exception("genre not found");
         }
 
+        if (genreUpdateDto.Name != null)
+            loan.Name = genreUpdateDto.Name;
 
-        loan.Name = genreUpdateDto.Name;
+        if (genreUpdateDto.Description != null)
+            loan.Description = genreUpdateDto.Description;
+
         context.SaveChanges();
 
         return new GenreResponseDto
         {
             Id = loan.Id,
-            Name = loan.Name
+            Name = loan.Name,
+            Description = loan.Description,
         };
     }
 

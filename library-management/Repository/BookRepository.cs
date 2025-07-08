@@ -16,10 +16,10 @@ namespace LibraryManagement.Repository
 
         public IEnumerable<BookResponseDto> GetAll()
         {
-            var books = databaseContext.Books
-                .Include(b => b.Loans)
+            var books = databaseContext
+                .Books.Include(b => b.Loans)
                 .Include(b => b.BookGenres)
-                    .ThenInclude(bg => bg.Genre)
+                .ThenInclude(bg => bg.Genre)
                 .ToList();
 
             return books.Select(b => new BookResponseDto
@@ -32,32 +32,37 @@ namespace LibraryManagement.Repository
                 Available = b.Available,
                 ImageUrl = b.ImageUrl,
                 Quantity = b.Quantity,
-                Genres = b.BookGenres.Select(bg => new GenreResponseDto
-                {
-                    Id = bg.Genre.Id,
-                    Name = bg.Genre.Name
-                }).ToList(),
-                Loans = b.Loans.Select(loan => new LoanResponseDto
-                {
-                    Id = loan.Id,
-                    BookId = loan.BookId,
-                    UserId = loan.UserId,
-                    LoanDate = loan.LoanDate,
-                    ReturnDate = loan.ReturnDate,
-                    ReturnedAt = loan.ReturnedAt
-                }).ToList()
+                Genres = b
+                    .BookGenres.Select(bg => new GenreResponseDto
+                    {
+                        Id = bg.Genre.Id,
+                        Name = bg.Genre.Name,
+                    })
+                    .ToList(),
+                Loans = b
+                    .Loans.Select(loan => new LoanResponseDto
+                    {
+                        Id = loan.Id,
+                        BookId = loan.BookId,
+                        ClientId = loan.ClientId,
+                        LoanDate = loan.LoanDate,
+                        ReturnDate = loan.ReturnDate,
+                        ReturnedAt = loan.ReturnedAt,
+                    })
+                    .ToList(),
             });
         }
 
         public BookResponseDto GetById(int bookId)
         {
-            var b = databaseContext.Books
-                .Include(b => b.Loans)
+            var b = databaseContext
+                .Books.Include(b => b.Loans)
                 .Include(b => b.BookGenres)
-                    .ThenInclude(bg => bg.Genre)
+                .ThenInclude(bg => bg.Genre)
                 .FirstOrDefault(b => b.Id == bookId);
 
-            if (b == null) return null;
+            if (b == null)
+                return null;
 
             return new BookResponseDto
             {
@@ -69,20 +74,24 @@ namespace LibraryManagement.Repository
                 Available = b.Available,
                 ImageUrl = b.ImageUrl,
                 Quantity = b.Quantity,
-                Genres = b.BookGenres.Select(bg => new GenreResponseDto
-                {
-                    Id = bg.Genre.Id,
-                    Name = bg.Genre.Name
-                }).ToList(),
-                Loans = b.Loans.Select(loan => new LoanResponseDto
-                {
-                    Id = loan.Id,
-                    BookId = loan.BookId,
-                    UserId = loan.UserId,
-                    LoanDate = loan.LoanDate,
-                    ReturnDate = loan.ReturnDate,
-                    ReturnedAt = loan.ReturnedAt
-                }).ToList()
+                Genres = b
+                    .BookGenres.Select(bg => new GenreResponseDto
+                    {
+                        Id = bg.Genre.Id,
+                        Name = bg.Genre.Name,
+                    })
+                    .ToList(),
+                Loans = b
+                    .Loans.Select(loan => new LoanResponseDto
+                    {
+                        Id = loan.Id,
+                        BookId = loan.BookId,
+                        ClientId = loan.ClientId,
+                        LoanDate = loan.LoanDate,
+                        ReturnDate = loan.ReturnDate,
+                        ReturnedAt = loan.ReturnedAt,
+                    })
+                    .ToList(),
             };
         }
 
@@ -96,10 +105,7 @@ namespace LibraryManagement.Repository
                 Description = bookDto.Description,
                 Quantity = bookDto.Quantity,
                 ImageUrl = bookDto.ImageUrl,
-                BookGenres = bookDto.GenreIds.Select(id => new BookGenre
-                {
-                    GenreId = id
-                }).ToList()
+                BookGenres = bookDto.GenreIds.Select(id => new BookGenre { GenreId = id }).ToList(),
             };
 
             databaseContext.Books.Add(book);
@@ -110,13 +116,14 @@ namespace LibraryManagement.Repository
 
         public BookResponseDto Update(int id, BookUpdateDto bookDto)
         {
-            var book = databaseContext.Books
-                .Include(b => b.BookGenres)
+            var book = databaseContext
+                .Books.Include(b => b.BookGenres)
+                .ThenInclude(bg => bg.Genre)
+                .Include(b => b.Loans)
                 .FirstOrDefault(b => b.Id == id);
 
             if (book == null)
             {
-
                 throw new Exception("Book not found");
             }
 
@@ -137,11 +144,7 @@ namespace LibraryManagement.Repository
 
                     if (!alreadyExists)
                     {
-                        book.BookGenres.Add(new BookGenre
-                        {
-                            GenreId = genreId,
-                            BookId = book.Id
-                        });
+                        book.BookGenres.Add(new BookGenre { GenreId = genreId, BookId = book.Id });
                     }
                 }
             }
@@ -155,31 +158,34 @@ namespace LibraryManagement.Repository
                 Description = book.Description,
                 Id = book.Id,
                 ImageUrl = book.ImageUrl,
-                Loans = book.Loans.Select(loan => new LoanResponseDto
-                {
-                    Id = loan.Id,
-                    BookId = loan.BookId,
-                    UserId = loan.UserId,
-                    LoanDate = loan.LoanDate,
-                    ReturnDate = loan.ReturnDate,
-                    ReturnedAt = loan.ReturnedAt
-                }).ToList(),
+                Loans = book
+                    .Loans.Select(loan => new LoanResponseDto
+                    {
+                        Id = loan.Id,
+                        BookId = loan.BookId,
+                        ClientId = loan.ClientId,
+                        LoanDate = loan.LoanDate,
+                        ReturnDate = loan.ReturnDate,
+                        ReturnedAt = loan.ReturnedAt,
+                    })
+                    .ToList(),
                 PublishYear = book.PublishYear,
                 Title = book.Title,
                 Quantity = book.Quantity,
-                Genres = book.BookGenres.Select(bg => new GenreResponseDto
-                {
-                    Id = bg.Genre.Id,
-                    Name = bg.Genre.Name
-                }).ToList()
+                Genres = book
+                    .BookGenres.Select(bg => new GenreResponseDto
+                    {
+                        Id = bg.Genre.Id,
+                        Name = bg.Genre.Name,
+                    })
+                    .ToList(),
             };
         }
 
-
         public async Task<bool> Remove(int bookId)
         {
-            var book = databaseContext.Books
-                .Include(b => b.BookGenres)
+            var book = databaseContext
+                .Books.Include(b => b.BookGenres)
                 .FirstOrDefault(b => b.Id == bookId);
 
             if (book == null)

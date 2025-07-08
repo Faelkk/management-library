@@ -1,5 +1,3 @@
-
-
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -33,4 +31,3 @@ namespace LibraryManagement.Models
         public ICollection<BookGenre> BookGenres { get; set; } = new List<BookGenre>();
     }
 }
-

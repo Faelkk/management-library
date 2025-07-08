@@ -3,11 +3,8 @@ using LibraryManagement.Repository;
 
 namespace LibraryManagement.Services;
 
-
-
 public class BookService : IBookService
 {
-
     private readonly IBookRepository bookRepository;
     private readonly IUploadFileService uploadFileService;
     private readonly IGenreRepository genreRepository;
@@ -15,14 +12,13 @@ public class BookService : IBookService
     public BookService(
         IBookRepository bookRepository,
         IUploadFileService uploadFileService,
-        IGenreRepository genreRepository)
+        IGenreRepository genreRepository
+    )
     {
         this.bookRepository = bookRepository;
         this.uploadFileService = uploadFileService;
         this.genreRepository = genreRepository;
     }
-
-
 
     public IEnumerable<BookResponseDto> GetAll()
     {
@@ -69,7 +65,9 @@ public class BookService : IBookService
     {
         foreach (var genreId in request.GenreIds)
         {
-            var genre = genreRepository.GetById(genreId) ?? throw new Exception($"Genre with id {genreId} does not exist.");
+            var genre =
+                genreRepository.GetById(genreId)
+                ?? throw new Exception($"Genre with id {genreId} does not exist.");
         }
 
         var imageUrl = await uploadFileService.UploadFileAsync(request.ImageFile);
@@ -82,7 +80,7 @@ public class BookService : IBookService
             PublishYear = request.PublishYear,
             Description = request.Description,
             Quantity = request.Quantity,
-            ImageUrl = imageUrl
+            ImageUrl = imageUrl,
         };
 
         var newBook = bookRepository.Create(bookInsertDto);
@@ -98,7 +96,7 @@ public class BookService : IBookService
             Loans = newBook.Loans,
             PublishYear = newBook.PublishYear,
             Title = newBook.Title,
-            Quantity = newBook.Quantity
+            Quantity = newBook.Quantity,
         };
     }
 
@@ -108,7 +106,9 @@ public class BookService : IBookService
         {
             foreach (var genreId in request.GenreIds)
             {
-                var genre = genreRepository.GetById(genreId) ?? throw new Exception($"Genre with id {genreId} does not exist.");
+                var genre =
+                    genreRepository.GetById(genreId)
+                    ?? throw new Exception($"Genre with id {genreId} does not exist.");
             }
         }
 
@@ -126,7 +126,7 @@ public class BookService : IBookService
             PublishYear = request.PublishYear,
             Description = request.Description,
             Quantity = request.Quantity,
-            ImageUrl = imageUrl
+            ImageUrl = imageUrl,
         };
 
         var updatedBook = bookRepository.Update(id, bookUpdateDto);
@@ -145,16 +145,12 @@ public class BookService : IBookService
             Loans = updatedBook.Loans,
             PublishYear = updatedBook.PublishYear,
             Title = updatedBook.Title,
-            Quantity = updatedBook.Quantity
+            Quantity = updatedBook.Quantity,
         };
     }
 
-
     public async Task<bool> Remove(int id)
     {
-
         return await bookRepository.Remove(id);
     }
-
-
 }

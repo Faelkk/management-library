@@ -4,7 +4,6 @@ namespace LibraryManagement.Services;
 
 public interface ILoanService
 {
-
     IEnumerable<LoanResponseDto> GetAll(int? year = null, int? month = null);
 
     LoanResponseDto GetById(int id);

@@ -10,6 +10,7 @@ public interface IDatabaseContext
     DbSet<Loan> Loans { get; }
     DbSet<Genre> Genres { get; }
     DbSet<BookGenre> BookGenres { get; }
+    DbSet<Client> clients { get; }
 
     DbSet<PasswordResetToken> PasswordResetTokens { get; }
 

@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace LibraryManagement.Services
 {
@@ -11,7 +11,6 @@ namespace LibraryManagement.Services
 
         public UploadFileService()
         {
-
             _uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
             if (!Directory.Exists(_uploadFolder))
             {
@@ -40,6 +39,5 @@ namespace LibraryManagement.Services
 
             return url;
         }
-
     }
 }

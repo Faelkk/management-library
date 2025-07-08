@@ -1,6 +1,5 @@
 namespace LibraryManagement.Services;
 
-
 using System.Net;
 using System.Net.Mail;
 using LibraryManagement.Dto;
@@ -13,23 +12,23 @@ public class EmailService : IEmailService
 
     public EmailService(IConfiguration configuration)
     {
-        _emailHost = configuration["EmailSettings:SmtpServer"]
+        _emailHost =
+            configuration["EmailSettings:SmtpServer"]
             ?? throw new InvalidOperationException("SmtpServer não configurado.");
 
-        _emailFrom = configuration["EmailSettings:From"]
+        _emailFrom =
+            configuration["EmailSettings:From"]
             ?? throw new InvalidOperationException("From não configurado.");
 
-        _emailPassword = configuration["EmailSettings:Password"]
+        _emailPassword =
+            configuration["EmailSettings:Password"]
             ?? throw new InvalidOperationException("Password não configurado.");
     }
-
 
     public void Send(Message message)
     {
         try
         {
-
-
             using (var msgEmail = new MailMessage())
             {
                 msgEmail.From = new MailAddress(_emailFrom);

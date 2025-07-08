@@ -1,4 +1,3 @@
-
 using LibraryManagement.Contexts;
 using LibraryManagement.Dto;
 using LibraryManagement.Models;
@@ -17,16 +16,19 @@ public class LoanRepository : ILoanRepository
 
     public IEnumerable<LoanResponseDto> GetAll()
     {
-        return databaseContext.Loans.Select(L => new LoanResponseDto
-        {
-            Id = L.Id,
-            BookId = L.BookId,
-            UserId = L.UserId,
-            LoanDate = L.LoanDate,
-            ReturnedAt = L.ReturnedAt,
-            ReturnDate = L.ReturnDate,
-        }).ToList();
+        return databaseContext
+            .Loans.Select(L => new LoanResponseDto
+            {
+                Id = L.Id,
+                BookId = L.BookId,
+                ClientId = L.ClientId,
+                LoanDate = L.LoanDate,
+                ReturnedAt = L.ReturnedAt,
+                ReturnDate = L.ReturnDate,
+            })
+            .ToList();
     }
+
     public LoanResponseDto? GetById(int loanId)
     {
         var loan = databaseContext.Loans.FirstOrDefault(l => l.Id == loanId);
@@ -41,21 +43,21 @@ public class LoanRepository : ILoanRepository
             BookId = loan.BookId,
             Id = loan.Id,
             LoanDate = loan.LoanDate,
-            UserId = loan.UserId,
+            ClientId = loan.ClientId,
             ReturnedAt = null,
             ReturnDate = loan.ReturnDate,
         };
-
     }
+
     public LoanResponseDto Create(LoanInsertDto loanDto)
     {
         var loan = new Loan
         {
             BookId = loanDto.BookId,
-            UserId = loanDto.UserId,
-            LoanDate = DateTime.Now,
-            ReturnDate = DateTime.Now.AddDays(7),
-            ReturnedAt = null
+            ClientId = loanDto.ClientId,
+            LoanDate = loanDto.LoanDate,
+            ReturnDate = loanDto.ReturnDate,
+            ReturnedAt = null,
         };
 
         databaseContext.Loans.Add(loan);
@@ -66,33 +68,47 @@ public class LoanRepository : ILoanRepository
             Id = loan.Id,
             BookId = loan.BookId,
             LoanDate = loan.LoanDate,
-            UserId = loan.UserId,
+            ClientId = loan.ClientId,
             ReturnedAt = loan.ReturnedAt,
             ReturnDate = loan.ReturnDate,
         };
-
     }
+
     public LoanResponseDto Update(int id, LoanUpdateDto loanUpdateDto)
     {
         var loan = databaseContext.Loans.FirstOrDefault(l => l.Id == id);
 
         if (loan == null)
-            throw new Exception("loan not found");
+            throw new Exception("Loan not found");
 
-        loan.ReturnedAt = loanUpdateDto.ReturnedAt;
+        if (loanUpdateDto.BookId != null)
+            loan.BookId = loanUpdateDto.BookId.Value;
+
+        if (loanUpdateDto.ClientId != null)
+            loan.ClientId = loanUpdateDto.ClientId.Value;
+
+        if (loanUpdateDto.LoanDate != null)
+            loan.LoanDate = loanUpdateDto.LoanDate.Value;
+
+        if (loanUpdateDto.ReturnDate != null)
+            loan.ReturnDate = loanUpdateDto.ReturnDate.Value;
+
+        if (loanUpdateDto.ReturnedAt != null)
+            loan.ReturnedAt = loanUpdateDto.ReturnedAt;
 
         databaseContext.SaveChanges();
 
         return new LoanResponseDto
         {
             Id = loan.Id,
-            UserId = loan.UserId,
+            ClientId = loan.ClientId,
             BookId = loan.BookId,
             LoanDate = loan.LoanDate,
-            ReturnedAt = loan.ReturnedAt,
             ReturnDate = loan.ReturnDate,
+            ReturnedAt = loan.ReturnedAt,
         };
     }
+
     public async Task Remove(int loanId)
     {
         var loan = databaseContext.Loans.FirstOrDefault(l => l.Id == loanId);
@@ -104,5 +120,3 @@ public class LoanRepository : ILoanRepository
         await databaseContext.SaveChangesAsync();
     }
 };
-
-

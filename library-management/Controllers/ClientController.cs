@@ -1,31 +1,27 @@
-namespace LibraryManagement.Controllers;
-
-using LibraryManagement.Dto;
 using LibraryManagement.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("loan")]
-public class LoanController : Controller
+[Route("client")]
+public class ClientController : ControllerBase
 {
-    private readonly ILoanService loanService;
+    private readonly IClientService clientService;
 
-    public LoanController(ILoanService loanService)
+    public ClientController(IClientService clientService)
     {
-        this.loanService = loanService;
+        this.clientService = clientService;
     }
 
     [Authorize(Policy = "Authenticated")]
     [Authorize(Policy = "Admin")]
     [HttpGet]
-    public IActionResult GetAll([FromQuery] int? year, [FromQuery] int? month)
+    public ActionResult<IEnumerable<ClientResponseDto>> GetAll()
     {
         try
         {
-            var loans = loanService.GetAll(year, month);
-            return Ok(loans);
+            var clients = clientService.GetAll();
+            return Ok(clients);
         }
         catch (Exception err)
         {
@@ -36,12 +32,12 @@ public class LoanController : Controller
     [Authorize(Policy = "Authenticated")]
     [Authorize(Policy = "Admin")]
     [HttpGet("{id}")]
-    public IActionResult GetOne(int id)
+    public ActionResult<ClientResponseDto> GetById(int id)
     {
         try
         {
-            var loans = loanService.GetById(id);
-            return Ok(loans);
+            var client = clientService.GetById(id);
+            return Ok(client);
         }
         catch (Exception err)
         {
@@ -49,15 +45,16 @@ public class LoanController : Controller
         }
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpPost]
-    public IActionResult Post([FromBody] LoanInsertDto loanInsertDto)
+    public IActionResult Create(ClientInsertDto clientInsertDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
         try
         {
-            var response = loanService.Create(loanInsertDto);
+            var response = clientService.Create(clientInsertDto);
             return Created("", response);
         }
         catch (Exception err)
@@ -66,17 +63,19 @@ public class LoanController : Controller
         }
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpPatch("{id}")]
-    public IActionResult Patch(int id, [FromBody] LoanUpdateDto loanUpdateDto)
+    public ActionResult<ClientResponseDto> Update(int id, ClientUpdateDto clientUpdateDto)
     {
         try
         {
-            var response = loanService.Update(id, loanUpdateDto);
-            return Ok(response);
+            var updated = clientService.Update(id, clientUpdateDto);
+            return Ok(updated);
         }
-        catch (Exception err)
+        catch (Exception ex)
         {
-            return BadRequest(new { message = err.Message });
+            return NotFound(ex.Message);
         }
     }
 
@@ -87,7 +86,7 @@ public class LoanController : Controller
     {
         try
         {
-            await loanService.Remove(id);
+            await clientService.Delete(id);
             return NoContent();
         }
         catch (Exception err)

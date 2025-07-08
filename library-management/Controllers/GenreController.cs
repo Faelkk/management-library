@@ -16,7 +16,6 @@ public class GenreController : ControllerBase
         this.genreService = genreService;
     }
 
-
     [Authorize(Policy = "Authenticated")]
     [HttpGet]
     public IActionResult GetAll()
@@ -24,7 +23,6 @@ public class GenreController : ControllerBase
         var genres = genreService.GetAll();
         return Ok(genres);
     }
-
 
     [Authorize(Policy = "Authenticated")]
     [HttpGet("{id}")]
@@ -46,8 +44,17 @@ public class GenreController : ControllerBase
     [HttpPost]
     public IActionResult Create([FromBody] GenreInsertDto genreInsertDto)
     {
-        var created = genreService.Create(genreInsertDto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        try
+        {
+            var created = genreService.Create(genreInsertDto);
+            return Created("", new { created });
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     [Authorize(Policy = "Authenticated")]
@@ -55,6 +62,8 @@ public class GenreController : ControllerBase
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody] GenreUpdateDto genreUpdateDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
         try
         {
             var updated = genreService.Update(id, genreUpdateDto);
@@ -65,8 +74,6 @@ public class GenreController : ControllerBase
             return NotFound(ex.Message);
         }
     }
-
-
 
     [Authorize(Policy = "Authenticated")]
     [Authorize(Policy = "Admin")]

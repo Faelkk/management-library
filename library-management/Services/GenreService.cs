@@ -15,8 +15,14 @@ public class GenreService : IGenreService
 
     public IEnumerable<GenreResponseDto> GetAll()
     {
-        return genreRepository.GetAll()
-            .Select(g => new GenreResponseDto { Id = g.Id, Name = g.Name });
+        return genreRepository
+            .GetAll()
+            .Select(g => new GenreResponseDto
+            {
+                Id = g.Id,
+                Name = g.Name,
+                Description = g.Description,
+            });
     }
 
     public GenreResponseDto GetById(int id)
@@ -25,14 +31,24 @@ public class GenreService : IGenreService
         if (genre == null)
             throw new Exception("Genre not found");
 
-        return new GenreResponseDto { Id = genre.Id, Name = genre.Name };
+        return new GenreResponseDto
+        {
+            Id = genre.Id,
+            Name = genre.Name,
+            Description = genre.Description,
+        };
     }
 
     public GenreResponseDto Create(GenreInsertDto genreInsertDto)
     {
         var created = genreRepository.Create(genreInsertDto);
 
-        return new GenreResponseDto { Id = created.Id, Name = created.Name };
+        return new GenreResponseDto
+        {
+            Id = created.Id,
+            Name = created.Name,
+            Description = created.Description,
+        };
     }
 
     public GenreResponseDto Update(int id, GenreUpdateDto genre)
@@ -41,12 +57,16 @@ public class GenreService : IGenreService
         if (updated == null)
             throw new Exception("Genre not found");
 
-        return new GenreResponseDto { Id = updated.Id, Name = updated.Name };
+        return new GenreResponseDto
+        {
+            Id = updated.Id,
+            Name = updated.Name,
+            Description = updated.Description,
+        };
     }
 
     public async Task<bool> Delete(int id)
     {
         return await genreRepository.Delete(id);
     }
-
 }

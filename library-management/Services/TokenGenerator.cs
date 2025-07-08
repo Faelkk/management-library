@@ -24,7 +24,7 @@ public class TokenGenerator : ITokenGenerator
         {
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
+            new Claim(ClaimTypes.Role, user.Role),
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor()
@@ -34,13 +34,10 @@ public class TokenGenerator : ITokenGenerator
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.Secret)),
                 SecurityAlgorithms.HmacSha256Signature
-            )
+            ),
         };
-
-
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-
 }

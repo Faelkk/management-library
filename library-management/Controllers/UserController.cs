@@ -5,11 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Controllers;
 
-
 [ApiController]
 [Route("user")]
-
-
 public class UserController : Controller
 {
     private readonly IUserService userService;
@@ -35,7 +32,6 @@ public class UserController : Controller
         }
     }
 
-
     [Authorize(Policy = "Authenticated")]
     [Authorize(Policy = "Admin")]
     [HttpGet("{id}")]
@@ -59,11 +55,11 @@ public class UserController : Controller
         return Ok(new { isValid = true });
     }
 
-
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     [HttpPost("create")]
     public IActionResult Create([FromBody] UserInsertDto userInsertDto)
     {
-
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -79,10 +75,8 @@ public class UserController : Controller
     }
 
     [HttpPost("login")]
-
     public IActionResult Login([FromBody] UserLoginDto userLoginDto)
     {
-
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -101,7 +95,6 @@ public class UserController : Controller
     [HttpPatch("recover-password")]
     public async Task<IActionResult> RecoverPassword([FromBody] UserRecoveryPasswordDto userData)
     {
-
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -117,9 +110,11 @@ public class UserController : Controller
     }
 
     [HttpPatch("reset-password")]
-    public async Task<IActionResult> ResetPassword([FromBody] UserResetPasswordDto userData, [FromQuery] string token)
+    public async Task<IActionResult> ResetPassword(
+        [FromBody] UserResetPasswordDto userData,
+        [FromQuery] string token
+    )
     {
-
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -129,6 +124,25 @@ public class UserController : Controller
         try
         {
             var response = await userService.ResetPassword(userData, token);
+            return Ok(response);
+        }
+        catch (Exception err)
+        {
+            return BadRequest(new { message = err.Message });
+        }
+    }
+
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> EditUser(int id, [FromBody] UserEditDto userData)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var response = await userService.EditUser(id, userData);
             return Ok(response);
         }
         catch (Exception err)
@@ -152,6 +166,4 @@ public class UserController : Controller
             return BadRequest(new { message = Err.Message });
         }
     }
-
-
 }

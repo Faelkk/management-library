@@ -5,7 +5,6 @@ namespace LibraryManagement.Models
 {
     public class BookGenre
     {
-
         [ForeignKey(nameof(Book))]
         public int BookId { get; set; }
         public Book Book { get; set; }

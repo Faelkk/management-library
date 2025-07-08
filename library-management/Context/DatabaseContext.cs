@@ -11,14 +11,15 @@ namespace LibraryManagement.Contexts
         public DbSet<Genre> Genres { get; set; }
         public DbSet<BookGenre> BookGenres { get; set; }
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+        public DbSet<Client> clients { get; set; }
 
-
-        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+            : base(options) { }
 
         public override int SaveChanges() => base.SaveChanges();
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-            => base.SaveChangesAsync(cancellationToken);
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
+            base.SaveChangesAsync(cancellationToken);
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -27,29 +28,32 @@ namespace LibraryManagement.Contexts
             var dbuser = Environment.GetEnvironmentVariable("DBUSER");
             var dbpass = Environment.GetEnvironmentVariable("DBPASSWORD");
 
-            var connectionString = $"Server={server};Database={database};User Id={dbuser};Password={dbpass};TrustServerCertificate=True;";
-            optionsBuilder.UseSqlServer(connectionString, options =>
-            {
-                options.EnableRetryOnFailure();
-            });
+            var connectionString =
+                $"Server={server};Database={database};User Id={dbuser};Password={dbpass};TrustServerCertificate=True;";
+            optionsBuilder.UseSqlServer(
+                connectionString,
+                options =>
+                {
+                    options.EnableRetryOnFailure();
+                }
+            );
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<BookGenre>()
-                .HasKey(bg => new { bg.BookId, bg.GenreId });
+            modelBuilder.Entity<BookGenre>().HasKey(bg => new { bg.BookId, bg.GenreId });
 
-            modelBuilder.Entity<BookGenre>()
+            modelBuilder
+                .Entity<BookGenre>()
                 .HasOne(bg => bg.Book)
                 .WithMany(b => b.BookGenres)
                 .HasForeignKey(bg => bg.BookId);
 
-            modelBuilder.Entity<BookGenre>()
+            modelBuilder
+                .Entity<BookGenre>()
                 .HasOne(bg => bg.Genre)
                 .WithMany(g => g.BookGenres)
                 .HasForeignKey(bg => bg.GenreId);
-
-
 
             modelBuilder.Entity<Book>(entity =>
             {
@@ -67,7 +71,7 @@ namespace LibraryManagement.Contexts
             {
                 entity.ToTable("loan");
                 entity.Property(e => e.Id).HasColumnName("id");
-                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.ClientId).HasColumnName("client_id");
                 entity.Property(e => e.BookId).HasColumnName("book_id");
                 entity.Property(e => e.LoanDate).HasColumnName("loan_date");
                 entity.Property(e => e.ReturnDate).HasColumnName("return_date");
@@ -79,6 +83,7 @@ namespace LibraryManagement.Contexts
                 entity.ToTable("genre");
                 entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.Name).HasColumnName("name");
+                entity.Property(e => e.Description).HasColumnName("description");
             });
 
             modelBuilder.Entity<BookGenre>(entity =>
@@ -98,20 +103,30 @@ namespace LibraryManagement.Contexts
             });
 
             modelBuilder.Entity<User>(entity =>
-  {
-      entity.ToTable("user");
-      entity.Property(e => e.Id).HasColumnName("id");
-      entity.Property(e => e.Name).HasColumnName("name");
-      entity.Property(e => e.Email).HasColumnName("email");
-      entity.Property(e => e.Password).HasColumnName("password");
-      entity.Property(e => e.Role).HasColumnName("role");
-      entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
+            {
+                entity.ToTable("user");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name");
+                entity.Property(e => e.Email).HasColumnName("email");
+                entity.Property(e => e.Password).HasColumnName("password");
+                entity.Property(e => e.Role).HasColumnName("role");
+                entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
 
-      entity.HasIndex(e => e.Email).IsUnique();
-      entity.HasIndex(e => e.PhoneNumber).IsUnique();
-  });
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.PhoneNumber).IsUnique();
+            });
 
+            modelBuilder.Entity<Client>(entity =>
+            {
+                entity.ToTable("client");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name");
+                entity.Property(e => e.Email).HasColumnName("email");
+                entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
 
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.PhoneNumber).IsUnique();
+            });
         }
     }
 }
