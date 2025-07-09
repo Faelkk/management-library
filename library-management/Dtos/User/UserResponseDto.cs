@@ -1,4 +1,3 @@
-
 namespace LibraryManagement.Dto;
 
 public class UserResponseDto
@@ -11,6 +10,4 @@ public class UserResponseDto
     public string Role { get; set; }
 
     public string PhoneNumber { get; set; }
-
-    public ICollection<LoanResponseDto> Loans { get; set; }
 }

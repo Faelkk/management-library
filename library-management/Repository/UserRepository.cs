@@ -28,17 +28,6 @@ public class UserRepository : IUserRepository
                 Name = user.Name,
                 Role = user.Role,
                 PhoneNumber = user.PhoneNumber,
-                Loans = user
-                    .Loans.Select(loan => new LoanResponseDto
-                    {
-                        Id = loan.Id,
-                        BookId = loan.BookId,
-                        ClientId = loan.ClientId,
-                        LoanDate = loan.LoanDate,
-                        ReturnDate = loan.ReturnDate,
-                        ReturnedAt = loan.ReturnedAt,
-                    })
-                    .ToList(),
             })
             .ToList();
 
@@ -62,17 +51,6 @@ public class UserRepository : IUserRepository
                 Name = user.Name,
                 Role = user.Role,
                 PhoneNumber = user.PhoneNumber,
-                Loans = user
-                    .Loans.Select(loan => new LoanResponseDto
-                    {
-                        Id = loan.Id,
-                        BookId = loan.BookId,
-                        ClientId = loan.ClientId,
-                        LoanDate = loan.LoanDate,
-                        ReturnDate = loan.ReturnDate,
-                        ReturnedAt = loan.ReturnedAt,
-                    })
-                    .ToList(),
             })
             .FirstOrDefaultAsync();
 

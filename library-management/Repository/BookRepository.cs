@@ -39,17 +39,6 @@ namespace LibraryManagement.Repository
                         Name = bg.Genre.Name,
                     })
                     .ToList(),
-                Loans = b
-                    .Loans.Select(loan => new LoanResponseDto
-                    {
-                        Id = loan.Id,
-                        BookId = loan.BookId,
-                        ClientId = loan.ClientId,
-                        LoanDate = loan.LoanDate,
-                        ReturnDate = loan.ReturnDate,
-                        ReturnedAt = loan.ReturnedAt,
-                    })
-                    .ToList(),
             });
         }
 
@@ -79,17 +68,6 @@ namespace LibraryManagement.Repository
                     {
                         Id = bg.Genre.Id,
                         Name = bg.Genre.Name,
-                    })
-                    .ToList(),
-                Loans = b
-                    .Loans.Select(loan => new LoanResponseDto
-                    {
-                        Id = loan.Id,
-                        BookId = loan.BookId,
-                        ClientId = loan.ClientId,
-                        LoanDate = loan.LoanDate,
-                        ReturnDate = loan.ReturnDate,
-                        ReturnedAt = loan.ReturnedAt,
                     })
                     .ToList(),
             };
@@ -158,17 +136,6 @@ namespace LibraryManagement.Repository
                 Description = book.Description,
                 Id = book.Id,
                 ImageUrl = book.ImageUrl,
-                Loans = book
-                    .Loans.Select(loan => new LoanResponseDto
-                    {
-                        Id = loan.Id,
-                        BookId = loan.BookId,
-                        ClientId = loan.ClientId,
-                        LoanDate = loan.LoanDate,
-                        ReturnDate = loan.ReturnDate,
-                        ReturnedAt = loan.ReturnedAt,
-                    })
-                    .ToList(),
                 PublishYear = book.PublishYear,
                 Title = book.Title,
                 Quantity = book.Quantity,
