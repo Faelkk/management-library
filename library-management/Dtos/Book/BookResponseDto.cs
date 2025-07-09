@@ -19,5 +19,7 @@ namespace LibraryManagement.Dto
         public bool Available { get; set; }
 
         public string ImageUrl { get; set; }
+
+        public ICollection<LoanResponseDto> Loans { get; set; }
     }
 }

@@ -151,6 +151,16 @@ public class BookService : IBookService
 
     public async Task<bool> Remove(int id)
     {
+        var book = bookRepository.GetById(id);
+        if (book == null)
+            throw new Exception("Book not found");
+
+        if (!string.IsNullOrEmpty(book.ImageUrl))
+        {
+            var fileName = Path.GetFileName(book.ImageUrl);
+            await uploadFileService.DeleteFileAsync(fileName);
+        }
+
         return await bookRepository.Remove(id);
     }
 }

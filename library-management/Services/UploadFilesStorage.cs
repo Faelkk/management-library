@@ -39,5 +39,15 @@ namespace LibraryManagement.Services
 
             return url;
         }
+
+        public async Task DeleteFileAsync(string fileName)
+        {
+            var filePath = Path.Combine(_uploadFolder, fileName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                await Task.CompletedTask;
+            }
+        }
     }
 }

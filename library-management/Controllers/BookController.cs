@@ -5,21 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Controllers;
 
-
 [ApiController]
 [Route("book")]
-
 public class BookController : Controller
 {
-
     private readonly IBookService bookService;
-
 
     public BookController(IBookService bookService)
     {
         this.bookService = bookService;
     }
-
 
     [Authorize(Policy = "Authenticated")]
     [HttpGet]
@@ -47,7 +42,6 @@ public class BookController : Controller
         }
         catch (Exception err)
         {
-
             return BadRequest(new { message = err.Message });
         }
     }
@@ -71,8 +65,6 @@ public class BookController : Controller
         }
     }
 
-
-
     [Authorize(Policy = "Authenticated")]
     [Authorize(Policy = "Admin")]
     [HttpPatch("{id}")]
@@ -91,8 +83,6 @@ public class BookController : Controller
             return BadRequest(new { message = err.Message });
         }
     }
-
-
 
     [Authorize(Policy = "Authenticated")]
     [Authorize(Policy = "Admin")]

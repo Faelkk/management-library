@@ -1,7 +1,4 @@
-
-
 using System.ComponentModel.DataAnnotations;
-
 
 namespace LibraryManagement.Dto
 {
@@ -15,9 +12,10 @@ namespace LibraryManagement.Dto
         [StringLength(100, ErrorMessage = "O autor deve ter no máximo 100 caracteres")]
         public string Author { get; set; }
 
-        [Range(1500, 2100, ErrorMessage = "Ano de publicação inválido")]
+        [Required]
         public int PublishYear { get; set; }
 
+        [Required]
         [StringLength(500, ErrorMessage = "A descrição deve ter no máximo 500 caracteres")]
         public string Description { get; set; }
 
@@ -32,4 +30,3 @@ namespace LibraryManagement.Dto
         public string ImageUrl { get; set; }
     }
 }
-

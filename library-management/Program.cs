@@ -74,19 +74,19 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
 });
 
-builder.Services.AddRateLimiter(options =>
-{
-    options.AddFixedWindowLimiter(
-        policyName: "fixed",
-        options =>
-        {
-            options.PermitLimit = 5;
-            options.Window = TimeSpan.FromSeconds(10);
-            options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-            options.QueueLimit = 2;
-        }
-    );
-});
+// builder.Services.AddRateLimiter(options =>
+// {
+//     options.AddFixedWindowLimiter(
+//         policyName: "fixed",
+//         options =>
+//         {
+//             options.PermitLimit = 5;
+//             options.Window = TimeSpan.FromSeconds(10);
+//             options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+//             options.QueueLimit = 2;
+//         }
+//     );
+// });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -119,7 +119,7 @@ app.UseCors(builder =>
     builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
 });
 
-var uploadsPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "Uploads"));
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
 
 app.UseStaticFiles(
     new StaticFileOptions
@@ -139,9 +139,10 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
-app.UseRateLimiter();
+
+// app.UseRateLimiter();
 app.UseAuthorization();
 
-app.MapControllers().RequireRateLimiting("fixed");
+app.MapControllers();
 
 app.Run();

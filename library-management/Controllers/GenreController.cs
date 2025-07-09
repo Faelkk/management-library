@@ -49,7 +49,7 @@ public class GenreController : ControllerBase
         try
         {
             var created = genreService.Create(genreInsertDto);
-            return Created("", new { created });
+            return Created("", created);
         }
         catch (Exception ex)
         {
