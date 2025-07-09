@@ -6,7 +6,7 @@ public interface IUserService
 {
     IEnumerable<UserResponseDto> GetAll();
     Task<UserResponseDto> GetById(int id);
-    UserResponseTokenDto Create(UserInsertDto userInsertDto);
+    UserResponseDto Create(UserInsertDto userInsertDto);
     UserResponseTokenDto Login(UserLoginDto userLoginDto, string userAgent);
     Task<UserResponseMessageDto> RecoverPassword(UserRecoveryPasswordDto userRecoveryDto);
     Task<UserResponseMessageDto> ResetPassword(UserResetPasswordDto userResetDto, string token);

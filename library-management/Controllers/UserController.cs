@@ -65,8 +65,8 @@ public class UserController : Controller
 
         try
         {
-            var response = userService.Create(userInsertDto);
-            return Created("", new { response.Token });
+            var userCreated = userService.Create(userInsertDto);
+            return Created("", userCreated);
         }
         catch (Exception err)
         {

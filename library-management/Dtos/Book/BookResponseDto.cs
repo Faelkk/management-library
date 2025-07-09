@@ -23,4 +23,3 @@ namespace LibraryManagement.Dto
         public ICollection<LoanResponseDto> Loans { get; set; }
     }
 }
-

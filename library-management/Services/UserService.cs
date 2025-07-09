@@ -58,7 +58,7 @@ public class UserService : IUserService
         };
     }
 
-    public UserResponseTokenDto Create(UserInsertDto userInsertDto)
+    public UserResponseDto Create(UserInsertDto userInsertDto)
     {
         var userCreated = userRepository.Create(userInsertDto);
 
@@ -75,9 +75,15 @@ public class UserService : IUserService
         };
         emailService.Send(message);
 
-        var token = tokenGenerator.Generate(userCreated);
-
-        return new UserResponseTokenDto { Token = token };
+        return new UserResponseDto
+        {
+            Email = userCreated.Email,
+            Id = userCreated.Id,
+            Loans = userCreated.Loans,
+            Name = userCreated.Name,
+            PhoneNumber = userCreated.PhoneNumber,
+            Role = userCreated.Role,
+        };
     }
 
     public UserResponseTokenDto Login(UserLoginDto userLoginDto, string userAgent)
