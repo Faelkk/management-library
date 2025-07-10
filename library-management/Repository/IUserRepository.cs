@@ -6,7 +6,7 @@ namespace LibraryManagement.UserRepository;
 public interface IUserRepository
 {
     IEnumerable<UserResponseDto> GetAll();
-    Task<UserResponseDto> GetById(int userId);
+    Task<UserResponseDto?> GetById(int userId);
 
     Task<User> GetEntityById(int id);
     UserResponseDto Create(UserInsertDto userDto);

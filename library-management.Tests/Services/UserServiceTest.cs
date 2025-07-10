@@ -97,13 +97,13 @@ public class UserServiceTest
     [Fact]
     public async Task GetById_NonExistingUser_ThrowsException()
     {
-        userRepositoryMock.Setup(r => r.GetById(99)).ReturnsAsync((UserResponseDto)null);
+        userRepositoryMock.Setup(r => r.GetById(99)).ReturnsAsync((UserResponseDto?)null);
 
         await Assert.ThrowsAsync<Exception>(() => userService.GetById(99));
     }
 
     [Fact]
-    public void Create_ValidUser_ReturnsTokenAndSendsEmail()
+    public void Create_ValidUser_ReturnsUserResponseDtoAndSendsEmail()
     {
         var userInsertDto = new UserInsertDto
         {
@@ -112,7 +112,7 @@ public class UserServiceTest
             Password = "pass",
         };
 
-        var createdUserResponseDto = new UserResponseDto
+        var createdUser = new UserResponseDto
         {
             Id = 1,
             Name = "Alice",
@@ -121,13 +121,16 @@ public class UserServiceTest
             PhoneNumber = "123",
         };
 
-        userRepositoryMock.Setup(r => r.Create(userInsertDto)).Returns(createdUserResponseDto);
-
-        tokenGeneratorMock.Setup(t => t.Generate(createdUserResponseDto)).Returns("token123");
+        userRepositoryMock.Setup(r => r.Create(userInsertDto)).Returns(createdUser);
 
         var result = userService.Create(userInsertDto);
 
-        Assert.Equal("token123", result.Token);
+        Assert.Equal(createdUser.Id, result.Id);
+        Assert.Equal(createdUser.Email, result.Email);
+        Assert.Equal(createdUser.Name, result.Name);
+        Assert.Equal(createdUser.PhoneNumber, result.PhoneNumber);
+        Assert.Equal(createdUser.Role, result.Role);
+
         emailServiceMock.Verify(
             e => e.Send(It.Is<Message>(m => m.MailTo == "alice@mail.com")),
             Times.Once

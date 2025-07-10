@@ -87,10 +87,11 @@ public class GenreServiceTest
     }
 
     [Fact]
-    public void Delete_ExistingGenre_ReturnsTrue()
+    public async Task Delete_ExistingGenre_ReturnsTrue()
     {
-        genreRepositoryMock.Setup(r => r.Delete(1)).Returns(Task.FromResult(true));
-        var result = genreService.Delete(1).Result;
+        genreRepositoryMock.Setup(r => r.Delete(1)).ReturnsAsync(true);
+
+        var result = await genreService.Delete(1);
 
         Assert.True(result);
     }

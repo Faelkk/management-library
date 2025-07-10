@@ -105,7 +105,7 @@ public class BookServiceTest
             Description = "Test Description",
             Quantity = 10,
             GenreIds = new List<int> { 1 },
-            ImageFile = new FormFile(null, 0, 0, "Data", "test.png"),
+            ImageFile = new FormFile(new MemoryStream(), 0, 0, "Data", "test.png"),
         };
 
         // Mock do gênero
@@ -182,10 +182,28 @@ public class BookServiceTest
     }
 
     [Fact]
-    public void Remove_ExistingBook_ReturnsTrue()
+    public async Task Remove_ExistingBook_ReturnsTrue()
     {
-        bookRepositoryMock.Setup(r => r.Remove(1)).Returns(Task.FromResult(true));
-        var result = bookService.Remove(1).Result;
+        var book = new BookResponseDto
+        {
+            Id = 1,
+            Title = "Book One",
+            Author = "Author A",
+            Quantity = 5,
+            Description = "Description One",
+            ImageUrl = "image1.jpg",
+            PublishYear = 2020,
+            Genres = new List<GenreResponseDto>(),
+            Loans = new List<LoanResponseDto>(),
+        };
+
+        bookRepositoryMock.Setup(r => r.GetById(1)).Returns(book);
+        uploadFileServiceMock
+            .Setup(u => u.DeleteFileAsync("image1.jpg"))
+            .Returns(Task.CompletedTask);
+        bookRepositoryMock.Setup(r => r.Remove(1)).ReturnsAsync(true);
+
+        var result = await bookService.Remove(1);
 
         Assert.True(result);
     }
